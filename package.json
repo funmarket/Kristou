@@ -12,12 +12,12 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm -ws --if-present run dev",
-    "build:packages": "npm -ws --if-present run build",
-    "build:apps": "npm -ws --if-present run build",
-    "build": "npm -ws --if-present run build",
-    "typecheck": "npm -ws --if-present run typecheck",
-    "lint": "eslint . --ext .ts,.tsx,.js,.mjs --max-warnings=0",
+    "dev": "node scripts/run-workspace-script.mjs dev all",
+    "build:packages": "node scripts/run-workspace-script.mjs build packages",
+    "build:apps": "node scripts/run-workspace-script.mjs build apps",
+    "build": "npm run build:packages && npm run build:apps",
+    "typecheck": "node scripts/run-workspace-script.mjs typecheck all",
+    "lint": "eslint . --max-warnings=0",
     "format": "prettier --write . --ignore-unknown",
     "format:check": "prettier --check . --ignore-unknown",
     "test": "node scripts/run-tests.mjs unit",
