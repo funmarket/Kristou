@@ -33,10 +33,10 @@ export interface CssVariableTarget {
 }
 
 export interface TelegramRuntimeSnapshot {
-  platform?: string;
-  version?: string;
-  viewportHeight?: number;
-  viewportStableHeight?: number;
+  platform: string | undefined;
+  version: string | undefined;
+  viewportHeight: number | undefined;
+  viewportStableHeight: number | undefined;
 }
 
 export interface TelegramRuntime {
