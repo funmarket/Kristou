@@ -130,6 +130,20 @@ Never merge identities because of matching:
 
 Account linking must be explicit and verified.
 
+## 4.2.1 Web login policy
+
+KRISTOU Web authentication uses:
+
+- a unique normalized **login username**;
+- a password stored only as a strong one-way password hash;
+- an optional email address.
+
+The optional email is not a Web login identifier. Web sign-in is **login username + password**.
+
+An email value does not become password-recovery authority merely because it is present. Email-based recovery requires a separately designed verified-email flow.
+
+A Telegram-originated canonical User may add a WebCredential later by choosing a unique login username and password, with email remaining optional. That WebCredential must attach to the existing canonical User rather than creating a second User.
+
 ## 4.3 Web -> Telegram linking
 
 A signed-in Web user may choose **Connect Telegram**.
