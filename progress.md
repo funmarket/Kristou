@@ -83,3 +83,22 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - `npm test` — PASS, correctly reports no unit tests yet
   - `npm run build` — PASS with no app/package workspaces yet
 - Package installation is **not yet verified** because outbound npm registry access is unavailable in the ChatGPT container. Do not claim `npm ci`, ESLint, Prettier, or dependency-backed workspace builds as green until CI or another connected runtime proves them.
+
+
+### Task 2 — Shared package skeletons + config authority
+
+- Integration baseline: `phase-0-foundation@a9358e0f45538627dcca60d5c00664103c97137c`
+- Task branch: `foundation/task-2-config`
+- RED proof: `tests/config/env.test.ts` failed before implementation with `ERR_MODULE_NOT_FOUND` for the missing config package.
+- Implemented focused `@kristou/config`, `@kristou/contracts`, `@kristou/domain`, and `@kristou/testing` package boundaries.
+- Configuration uses explicit `APP_ENV` / `VITE_APP_ENV`; security behavior is not inferred from `NODE_ENV`.
+- `loadApiConfig(env)`, `loadWorkerConfig(env)`, and `loadWebPublicConfig(env)` are implemented with Zod schemas.
+- Public Web config only returns `appEnv` and `apiBaseUrl`; private database/session/Telegram/storage values are not projected.
+- `.env.example` was reconciled with the implemented configuration contract.
+- Source-level verification in the ChatGPT container:
+  - TypeScript syntax stripping/check for `packages/config/src/env.ts` — PASS
+  - TypeScript syntax stripping/check for `packages/config/src/index.ts` — PASS
+  - architecture dependency guard over the new package boundaries — PASS
+  - package-lock workspace link for `@kristou/config` — PASS
+  - lockfile Zod version matches manifest (`4.4.3`) — PASS
+- Dependency-backed config tests / full package typecheck are **not yet runtime-proven** because outbound npm-registry access is unavailable in the ChatGPT container. This remains an explicit verification gap until CI is available.
