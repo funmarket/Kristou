@@ -7,3 +7,6 @@ coverage/
 .DS_Store
 *.log
 .superpowers/
+
+# Generated from packages/ui canonical brand asset before Web dev/build.
+apps/web/public/kristou-logo.png
