@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { test } from "node:test";
 import React from "react";
 import { JSDOM } from "jsdom";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { KristouShell } from "../../packages/frontend/src/shell/KristouShell.tsx";
 
 function installDom() {
@@ -10,71 +9,110 @@ function installDom() {
     url: "http://localhost/",
   });
 
-  Object.assign(globalThis, {
-    window: dom.window,
-    document: dom.window.document,
-    HTMLElement: dom.window.HTMLElement,
-    Node: dom.window.Node,
-    navigator: dom.window.navigator,
+  Object.defineProperty(globalThis, "window", {
+    value: dom.window,
+    configurable: true,
+    writable: true,
+  });
+  Object.defineProperty(globalThis, "document", {
+    value: dom.window.document,
+    configurable: true,
+    writable: true,
+  });
+  Object.defineProperty(globalThis, "navigator", {
+    value: dom.window.navigator,
+    configurable: true,
+    writable: true,
+  });
+  Object.defineProperty(globalThis, "HTMLElement", {
+    value: dom.window.HTMLElement,
+    configurable: true,
+    writable: true,
+  });
+  Object.defineProperty(globalThis, "Node", {
+    value: dom.window.Node,
+    configurable: true,
+    writable: true,
   });
 
   return dom;
 }
 
-afterEach(() => {
-  cleanup();
-});
+async function renderShell() {
+  const testing = await import("@testing-library/react");
+  return {
+    testing,
+    view: testing.render(
+      <KristouShell>
+        <main>Content</main>
+      </KristouShell>,
+    ),
+  };
+}
 
-test("phone-first shell exposes separate notification and account controls", () => {
+test("phone-first shell exposes separate notification and account controls", async () => {
   const dom = installDom();
-  render(<KristouShell><main>Content</main></KristouShell>);
+  const { view } = await renderShell();
 
-  assert.ok(screen.getByRole("button", { name: /notifications/i }));
-  assert.ok(screen.getByRole("button", { name: /account/i }));
-
-  dom.window.close();
+  try {
+    assert.ok(view.getByRole("button", { name: /notifications/i }));
+    assert.ok(view.getByRole("button", { name: /account/i }));
+  } finally {
+    view.unmount();
+    dom.window.close();
+  }
 });
 
-test("theme choice starts Light and changes only after an explicit user action", () => {
+test("theme choice starts Light and changes only after an explicit user action", async () => {
   const dom = installDom();
   Object.defineProperty(dom.window, "matchMedia", {
     value: () => ({ matches: true }),
     configurable: true,
   });
+  const { testing, view } = await renderShell();
 
-  render(<KristouShell><main>Content</main></KristouShell>);
-  assert.equal(document.documentElement.dataset.theme, "light");
+  try {
+    assert.equal(document.documentElement.dataset.theme, "light");
 
-  fireEvent.click(screen.getByRole("button", { name: /account/i }));
-  fireEvent.click(screen.getByRole("button", { name: /pitch black/i }));
+    testing.fireEvent.click(view.getByRole("button", { name: /account/i }));
+    testing.fireEvent.click(view.getByRole("button", { name: /pitch black/i }));
 
-  assert.equal(document.documentElement.dataset.theme, "dark");
-  dom.window.close();
+    assert.equal(document.documentElement.dataset.theme, "dark");
+  } finally {
+    view.unmount();
+    dom.window.close();
+  }
 });
 
-test("Arabic switches the shared shell to RTL without changing component tree", () => {
+test("Arabic switches the shared shell to RTL without changing component tree", async () => {
   const dom = installDom();
-  render(<KristouShell><main>Content</main></KristouShell>);
+  const { testing, view } = await renderShell();
 
-  fireEvent.click(screen.getByRole("button", { name: /account/i }));
-  fireEvent.click(screen.getByRole("button", { name: /العربية/i }));
+  try {
+    testing.fireEvent.click(view.getByRole("button", { name: /account/i }));
+    testing.fireEvent.click(view.getByRole("button", { name: /العربية/i }));
 
-  assert.equal(document.documentElement.lang, "ar");
-  assert.equal(document.documentElement.dir, "rtl");
-  assert.ok(screen.getByRole("button", { name: /الإشعارات/i }));
-
-  dom.window.close();
+    assert.equal(document.documentElement.lang, "ar");
+    assert.equal(document.documentElement.dir, "rtl");
+    assert.ok(view.getByRole("button", { name: /الإشعارات/i }));
+  } finally {
+    view.unmount();
+    dom.window.close();
+  }
 });
 
-test("account sheet uses governed scroll utility and remains reachable on phones", () => {
+test("account sheet uses governed scroll utility and remains reachable on phones", async () => {
   const dom = installDom();
-  render(<KristouShell><main>Content</main></KristouShell>);
+  const { testing, view } = await renderShell();
 
-  fireEvent.click(screen.getByRole("button", { name: /account/i }));
-  const sheet = screen.getByRole("dialog", { name: /account/i });
+  try {
+    testing.fireEvent.click(view.getByRole("button", { name: /account/i }));
+    const sheet = view.getByRole("dialog", { name: /account/i });
 
-  assert.match(sheet.className, /k-scroll/);
-  assert.match(sheet.className, /k-account-sheet/);
-
-  dom.window.close();
+    assert.match(sheet.className, /k-scroll/);
+    assert.match(sheet.className, /k-account-sheet/);
+  } finally {
+    view.unmount();
+    dom.window.close();
+  }
 });
