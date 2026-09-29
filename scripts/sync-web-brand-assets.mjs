@@ -1,7 +1,8 @@
 import { copyFile, mkdir } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = process.cwd();
+const root = fileURLToPath(new URL("..", import.meta.url));
 const source = path.join(root, "packages/ui/src/assets/kristou-logo.png");
 const publicDirectory = path.join(root, "apps/web/public");
 const destination = path.join(publicDirectory, "kristou-logo.png");
