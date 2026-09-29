@@ -90,6 +90,15 @@ Dedicated ADR files may be added under `docs/adr/` when a decision needs deeper 
 
 ---
 
+
+## ADR-011 — Security-sensitive environment selection is explicit
+
+**Decision:** Server configuration uses `APP_ENV` and public Web configuration uses `VITE_APP_ENV` with the allowed values `local | staging | production`. KRISTOU does not infer security-sensitive runtime behavior from `NODE_ENV` alone.
+
+**Reason:** Build tools and hosting platforms may set `NODE_ENV` for optimization independently of KRISTOU's deployment environment. An explicit application environment keeps fail-closed configuration behavior deliberate and testable.
+
+---
+
 # ADR template
 
 Use this structure for a new decision:
