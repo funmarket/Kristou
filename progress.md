@@ -19,18 +19,24 @@ Verified repository governance/architecture documents now exist:
 - `docs/LIVING_BUILD_PLAN.md`
 - `.env.example`
 
-At this point there is **no verified application implementation yet** for:
+Current merged Phase 0 implementation evidence on `phase-0-foundation` includes:
 
-- monorepo/workspace manifests;
-- `apps/api`;
-- `apps/web`;
-- `apps/telegram`;
-- `apps/worker`;
-- shared packages;
+- root npm workspace/toolchain and architecture/preflight scripts;
+- focused shared package boundaries and explicit configuration authority;
+- API liveness/readiness foundation;
+- Worker lifecycle/readiness foundation;
+- phone-first shared UI/frontend foundation;
+- Web shell with Light default, Pitch Black dark mode, AR/FR/EN direction support, and governed mobile scroll behavior.
+
+The Telegram runtime facade in this branch is an **unmerged Task 5 candidate** and must not be treated as integration truth until explicitly merged.
+
+Still not implemented/verified as merged product capability:
+
 - database schema/migrations;
-- Redis runtime;
-- object storage runtime;
-- authentication;
+- Redis-backed business behavior;
+- object-storage runtime;
+- authentication/session flows;
+- Telegram initData authentication/account linking;
 - authorization;
 - registration;
 - class community;
@@ -38,9 +44,9 @@ At this point there is **no verified application implementation yet** for:
 - Messages;
 - Pickup;
 - Food Menu;
-- notifications;
+- notifications delivery;
 - AI;
-- deployment.
+- staging/production deployment.
 
 Do not mark planned architecture as implemented until source/runtime evidence exists.
 
@@ -156,3 +162,33 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - dependency-backed React/jsdom tests, TypeScript workspace typecheck, and Vite build cannot run in the current ChatGPT container because outbound npm registry resolution is unavailable;
   - rendered browser QA at 320/360/393/430/desktop could not be completed because the available headless Chromium process hangs on the container DBus/headless environment.
 - Do not treat those runtime/render checks as verified until Task 8 CI or another supported browser runtime proves them.
+
+
+### Task 5 — Telegram runtime facade candidate
+
+- Integration baseline: `phase-0-foundation@4f6e919b2fb2ca32b66d17a498c0dec69d241050`
+- Task branch: `foundation/task-5-telegram-runtime`
+- RED proof: focused Telegram runtime test failed before implementation with `ERR_MODULE_NOT_FOUND` for `apps/telegram/src/runtime.ts`.
+- Implemented only the Telegram presentation/runtime facade:
+  - `ready()` + `expand()` lifecycle calls;
+  - `viewportChanged`, `safeAreaChanged`, and `contentSafeAreaChanged` listeners;
+  - content-safe-area values projected into the shared KRISTOU `--k-safe-*` CSS variables;
+  - Telegram viewport heights projected into Telegram-specific CSS variables;
+  - listener cleanup + CSS-variable cleanup on dispose;
+  - snapshot limited to Telegram runtime/presentation facts;
+  - `@kristou/telegram` reuses `@kristou/frontend` and `@kristou/ui`.
+- Explicitly not implemented:
+  - Telegram bot token;
+  - initData validation;
+  - authentication;
+  - account linking;
+  - Telegram-specific business records/state;
+  - any product-domain logic.
+- Focused verification:
+  - `node --experimental-strip-types --test tests/telegram/runtime.test.ts` against the exact runtime behavior — **3/3 PASS**;
+  - branch compare against `phase-0-foundation`: only Telegram runtime files, lockfile, test, and this progress entry are in scope;
+  - package dependencies are narrow: `@kristou/frontend` + `@kristou/ui`;
+  - no `TELEGRAM_BOT_TOKEN` dependency or credential is required by the runtime facade.
+- Telegram API behavior was checked against the official Mini Apps documentation for `ready()`, `expand()`, viewport changes, safe-area changes, and content-safe-area changes.
+- Dependency-backed workspace `tsc`/build remains unverified in this container because npm-registry access is unavailable; Task 8 CI remains the authoritative dependency-backed gate.
+- Status: **REVIEW-READY CANDIDATE — NOT MERGED**.
