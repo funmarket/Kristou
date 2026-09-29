@@ -1,0 +1,44 @@
+{
+  "name": "kristou-school",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm -ws --if-present run dev",
+    "build:packages": "npm -ws --if-present run build",
+    "build:apps": "npm -ws --if-present run build",
+    "build": "npm -ws --if-present run build",
+    "typecheck": "npm -ws --if-present run typecheck",
+    "lint": "eslint . --ext .ts,.tsx,.js,.mjs --max-warnings=0",
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown",
+    "test": "node scripts/run-tests.mjs unit",
+    "test:integration": "node scripts/run-tests.mjs integration",
+    "architecture:check": "node scripts/architecture-check.mjs",
+    "deploy:preflight": "node scripts/deploy-preflight.mjs",
+    "security:check": "npm audit --omit=dev --omit=optional --audit-level=high",
+    "check": "npm run architecture:check && npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm run deploy:preflight",
+    "db:generate": "npm -w @kristou/database run generate",
+    "db:validate": "npm -w @kristou/database run validate",
+    "db:migrate:deploy": "npm -w @kristou/database run migrate:deploy",
+    "db:migrate:status": "npm -w @kristou/database run migrate:status"
+  },
+  "devDependencies": {
+    "@testing-library/react": "16.3.0",
+    "concurrently": "10.0.5",
+    "eslint": "10.7.0",
+    "jsdom": "26.1.0",
+    "prettier": "3.9.6",
+    "tsx": "4.20.5",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.65.0"
+  }
+}
