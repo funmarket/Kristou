@@ -63,14 +63,24 @@ Conceptual fields include:
 
 ```text
 userId
-login identifier(s) TBD
+loginUsername
 passwordHash
-security/lock metadata TBD
+email?
+failedLoginCount
+lockedUntil?
+lastLoginAt?
 createdAt
 updatedAt
 ```
 
-Exact login-identifier policy is TBD until the authentication implementation slice.
+Rules:
+
+- `loginUsername` is the unique normalized Web login identifier;
+- Web sign-in is login username + password;
+- `email` is optional and is not a Web login identifier;
+- an optional email value is not password-recovery authority unless a separate verified-email flow is implemented;
+- a Telegram-originated canonical User may later add exactly one WebCredential to the same `User.id`;
+- creating Web credentials must never create a second canonical User for an already authenticated Telegram-originated account.
 
 **Write owner:** Identity & Authentication.
 
