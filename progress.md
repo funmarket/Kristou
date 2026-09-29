@@ -102,3 +102,24 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - package-lock workspace link for `@kristou/config` — PASS
   - lockfile Zod version matches manifest (`4.4.3`) — PASS
 - Dependency-backed config tests / full package typecheck are **not yet runtime-proven** because outbound npm-registry access is unavailable in the ChatGPT container. This remains an explicit verification gap until CI is available.
+
+
+### Task 3 — API + Worker runtime foundations
+
+- Integration baseline: `phase-0-foundation@0c5349db5a6040843be27ab11d75259c611e65aa`
+- Task branch: `foundation/task-3-runtimes`
+- RED proof: API/Worker startup tests failed before implementation with `ERR_MODULE_NOT_FOUND` for the missing runtime source.
+- Implemented:
+  - Express 5 API composition root;
+  - `GET /health/live` -> 200 `{ status: "ok" }`;
+  - `GET /health/ready` -> 503 until the readiness probe reports initialized dependencies;
+  - Helmet + strict configured CORS baseline;
+  - fail-closed config loading before API listen;
+  - Worker readiness primitive;
+  - Worker startup/stop lifecycle and signal handling;
+  - no business polling/domain logic.
+- Source-level verification in the ChatGPT container:
+  - TypeScript syntax stripping/check for all new API/Worker source files — PASS
+  - architecture dependency guard over API/Worker -> config dependency direction — PASS
+  - lockfile workspace registration for `@kristou/api` and `@kristou/worker` — PASS
+- Dependency-backed HTTP tests, package typecheck, and build are **not yet runtime-proven** because outbound npm-registry access is unavailable in the ChatGPT container. These remain explicit CI verification gaps until Task 8.
