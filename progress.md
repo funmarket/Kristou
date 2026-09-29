@@ -146,7 +146,12 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - source Git blob SHA: `a39a8686e8fb821eda164e54a33ef694a9443d8c`
   - repository blob SHA: `a39a8686e8fb821eda164e54a33ef694a9443d8c`
 - Web dev/build uses `scripts/sync-web-brand-assets.mjs` to copy the canonical UI-owned logo into Vite public output without committing a second authoritative logo.
-- Fresh source-contract audit on the task branch: **23/23 checks passed**, covering theme defaults, exact black/white dark tokens, RTL/LTR mapping, transparent scrollbars, safe areas, separate bell/account controls, phone bottom-sheet behavior, workspace direction, Web asset sync, and logo blob identity.
+- Fresh source-contract audit on the final task head: **27/27 checks passed**, covering branch isolation, theme defaults, exact black/white dark tokens, RTL/LTR mapping, transparent scrollbars, safe areas, separate bell/account controls, phone bottom-sheet behavior, workspace direction, Web asset sync, and logo blob identity.
+- Focused PR review caught a real path bug in the first asset-sync implementation: npm workspace scripts may execute with `apps/web` as the working directory, so resolving the repo from `process.cwd()` was unsafe. The sync script now derives the repository root from `import.meta.url`.
+- The corrected asset-sync script was executed from a nested `apps/web` working directory in the container and produced a byte-identical public copy:
+  - canonical SHA-256: `316d53ab3da5863af2a883cc8553ea418e517acd104a4c1020b5166e73349efc`
+  - generated-copy SHA-256: `316d53ab3da5863af2a883cc8553ea418e517acd104a4c1020b5166e73349efc`
+  - `cmp` result: exact match
 - Runtime gaps not yet closed:
   - dependency-backed React/jsdom tests, TypeScript workspace typecheck, and Vite build cannot run in the current ChatGPT container because outbound npm registry resolution is unavailable;
   - rendered browser QA at 320/360/393/430/desktop could not be completed because the available headless Chromium process hangs on the container DBus/headless environment.
