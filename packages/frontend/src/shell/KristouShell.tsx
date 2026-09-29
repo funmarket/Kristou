@@ -12,7 +12,7 @@ import {
 import "./KristouShell.css";
 
 export interface KristouShellProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   logoSrc?: string;
 }
 
@@ -93,7 +93,13 @@ export function KristouShell({
         </div>
       </header>
 
-      <main className="k-shell-main">{children}</main>
+      <main className="k-shell-main">
+        {children ?? (
+          <section className="k-foundation-empty">
+            <p>{t.shellHint}</p>
+          </section>
+        )}
+      </main>
 
       {openPanel !== null && (
         <>
