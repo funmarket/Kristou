@@ -78,4 +78,8 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - deliberate forbidden `packages/domain -> @kristou/database` import — correctly FAILS
   - clean deploy preflight — PASS
   - deliberate committed-root `.env` condition — correctly FAILS
-- Package installation is **not yet verified** because outbound npm registry access is unavailable in the ChatGPT container. Do not claim `npm ci`, ESLint, Prettier, or full workspace build as green until CI or another connected runtime proves them.
+- Additional root-script verification in the ChatGPT container:
+  - `npm run typecheck` — PASS with no workspaces yet
+  - `npm test` — PASS, correctly reports no unit tests yet
+  - `npm run build` — PASS with no app/package workspaces yet
+- Package installation is **not yet verified** because outbound npm registry access is unavailable in the ChatGPT container. Do not claim `npm ci`, ESLint, Prettier, or dependency-backed workspace builds as green until CI or another connected runtime proves them.
