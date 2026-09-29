@@ -19,18 +19,24 @@ Verified repository governance/architecture documents now exist:
 - `docs/LIVING_BUILD_PLAN.md`
 - `.env.example`
 
-At this point there is **no verified application implementation yet** for:
+Current merged Phase 0 implementation evidence on `phase-0-foundation` includes:
 
-- monorepo/workspace manifests;
-- `apps/api`;
-- `apps/web`;
-- `apps/telegram`;
-- `apps/worker`;
-- shared packages;
+- root npm workspace/toolchain and architecture/preflight scripts;
+- focused shared package boundaries and explicit configuration authority;
+- API liveness/readiness foundation;
+- Worker lifecycle/readiness foundation;
+- phone-first shared UI/frontend foundation;
+- Web shell with Light default, Pitch Black dark mode, AR/FR/EN direction support, and governed mobile scroll behavior.
+
+The Telegram runtime facade in this branch is an **unmerged Task 5 candidate** and must not be treated as integration truth until explicitly merged.
+
+Still not implemented/verified as merged product capability:
+
 - database schema/migrations;
-- Redis runtime;
-- object storage runtime;
-- authentication;
+- Redis-backed business behavior;
+- object-storage runtime;
+- authentication/session flows;
+- Telegram initData authentication/account linking;
 - authorization;
 - registration;
 - class community;
@@ -38,9 +44,9 @@ At this point there is **no verified application implementation yet** for:
 - Messages;
 - Pickup;
 - Food Menu;
-- notifications;
+- notifications delivery;
 - AI;
-- deployment.
+- staging/production deployment.
 
 Do not mark planned architecture as implemented until source/runtime evidence exists.
 
