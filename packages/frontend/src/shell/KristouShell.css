@@ -119,6 +119,21 @@
     max(14px, var(--k-safe-left));
 }
 
+.k-foundation-empty {
+  display: grid;
+  min-height: 52dvh;
+  place-items: center;
+  text-align: center;
+}
+
+.k-foundation-empty p {
+  max-width: 520px;
+  margin: 0;
+  color: var(--k-text-muted);
+  font-size: clamp(15px, 4.2vw, 18px);
+  line-height: 1.6;
+}
+
 .k-panel-backdrop {
   position: fixed;
   z-index: 80;
