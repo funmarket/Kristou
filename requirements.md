@@ -200,9 +200,19 @@ Do not place dark text on dark surfaces.
 
 ## 6.3 Brand
 
-The latest owner-approved enhanced KRISTOU SCHOOL logo is the official app logo source.
+The latest owner-supplied KRISTOU SCHOOL logo asset is the official app logo source.
 
-Preserve its artwork, dimensional treatment, teal/gold identity, and drop shadow.
+Use that supplied artwork as-is. Do not regenerate, redraw, replace, recolor, or stylistically reinterpret it unless the product owner explicitly requests a new logo asset.
+
+## 6.4 Phone-first scrolling
+
+KRISTOU is a phone-device-first application.
+
+- Touch scrolling must remain native, smooth, and unobstructed.
+- Scrollable cards, sheets, menus, carousels, and panels must not show thick browser-default scrollbars.
+- On touch/mobile surfaces, scrollbar chrome should be effectively transparent/hidden while preserving scrollability.
+- On pointer/desktop surfaces, any visible scrollbar should be thin, transparent/low-contrast, and unobtrusive.
+- Horizontal card strips must not expose an old-style horizontal scrollbar.
 
 ---
 
