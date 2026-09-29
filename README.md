@@ -93,6 +93,14 @@ See `requirements.md` for accepted behavior rather than treating this README as 
 
 ## First run
 
-TBD. No package manager, workspace manifest, runtime, or verified local command exists yet.
+The Phase 0 workspace bootstrap uses Node.js 22 and npm 10.9.2.
 
-Do not invent commands. Update this section when the implementation foundation is created and verified.
+```bash
+npm ci
+npm run architecture:check
+npm run format:check
+npm run lint
+npm run deploy:preflight
+```
+
+The API/Web/Telegram/Worker workspaces are added in later Phase 0 tasks. Until those workspaces exist, full build/typecheck/runtime commands are intentionally not claimed as verified.
