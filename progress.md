@@ -123,3 +123,31 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - architecture dependency guard over API/Worker -> config dependency direction — PASS
   - lockfile workspace registration for `@kristou/api` and `@kristou/worker` — PASS
 - Dependency-backed HTTP tests, package typecheck, and build are **not yet runtime-proven** because outbound npm-registry access is unavailable in the ChatGPT container. These remain explicit CI verification gaps until Task 8.
+
+
+### Task 4 — Phone-first UI/design-system + Web shell
+
+- Integration baseline: `phase-0-foundation@d8a1f40d94e46fdd0429226abac00274130531ce`
+- Task branch: `foundation/task-4-web-ui`
+- Added `@kristou/ui`, `@kristou/frontend`, and `@kristou/web` workspace boundaries.
+- Added semantic Light/Pitch Black tokens:
+  - Light default: `#FFFFFF`
+  - Pitch Black background: `#000000`
+  - Pitch Black primary text: `#FFFFFF`
+- Added phone-first governed scrolling:
+  - native touch scrolling preserved;
+  - scrollbar chrome hidden on coarse/touch pointers;
+  - transparent track + low-contrast hover thumb on pointer/desktop surfaces.
+- Added shared English/French/Arabic shell translations with Arabic RTL and FR/EN LTR.
+- Added phone-first KRISTOU shell with separate bell/account controls, bottom-sheet account/notification panels on phones, desktop expansion, and safe-area handling.
+- No fake authenticated product state, class data, child data, notifications, or capability grants were introduced.
+- Official owner-supplied `ggd.png` is committed unchanged at `packages/ui/src/assets/kristou-logo.png`.
+  - source SHA-256: `316d53ab3da5863af2a883cc8553ea418e517acd104a4c1020b5166e73349efc`
+  - source Git blob SHA: `a39a8686e8fb821eda164e54a33ef694a9443d8c`
+  - repository blob SHA: `a39a8686e8fb821eda164e54a33ef694a9443d8c`
+- Web dev/build uses `scripts/sync-web-brand-assets.mjs` to copy the canonical UI-owned logo into Vite public output without committing a second authoritative logo.
+- Fresh source-contract audit on the task branch: **23/23 checks passed**, covering theme defaults, exact black/white dark tokens, RTL/LTR mapping, transparent scrollbars, safe areas, separate bell/account controls, phone bottom-sheet behavior, workspace direction, Web asset sync, and logo blob identity.
+- Runtime gaps not yet closed:
+  - dependency-backed React/jsdom tests, TypeScript workspace typecheck, and Vite build cannot run in the current ChatGPT container because outbound npm registry resolution is unavailable;
+  - rendered browser QA at 320/360/393/430/desktop could not be completed because the available headless Chromium process hangs on the container DBus/headless environment.
+- Do not treat those runtime/render checks as verified until Task 8 CI or another supported browser runtime proves them.
