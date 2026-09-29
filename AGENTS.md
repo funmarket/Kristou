@@ -134,7 +134,17 @@ Genuinely generic primitives may be shared, but shared code must never become a 
 
 ---
 
-## 6. Parallel-agent / concurrency boundary
+## 6. Branching, parallel-agent, and concurrency boundary
+
+KRISTOU follows the same integration-branch discipline proven in HoomaUltimate:
+
+- `main` is not the day-to-day implementation branch.
+- `phase-0-foundation` is the long-lived Phase 0 integration branch.
+- Every implementation slice branches from the current verified `phase-0-foundation` HEAD.
+- Slice branches use focused names such as `foundation/<task>`, `feat/<domain-slice>`, or `fix/<issue>`.
+- A slice is reviewed and merged back into `phase-0-foundation`; do not merge ordinary implementation work directly into `main`.
+- Before starting the next slice, verify the new `phase-0-foundation` HEAD and branch from that exact commit.
+- `main` moves only through an explicit owner-approved release/foundation promotion.
 
 Unless the product owner explicitly instructs otherwise, never interfere with another agent's active work.
 
@@ -145,7 +155,8 @@ Do not:
 - force-push;
 - overwrite a non-fast-forward update;
 - modify unrelated files while "already in the area";
-- adopt another agent's task without authorization.
+- adopt another agent's task without authorization;
+- branch a new implementation slice from stale `main` when `phase-0-foundation` exists.
 
 If HEAD changes after the initial snapshot:
 
@@ -153,7 +164,7 @@ If HEAD changes after the initial snapshot:
 2. inspect the new HEAD and incoming diff;
 3. determine whether it overlaps the current task;
 4. stop and report if ownership overlaps or is unclear;
-5. if clearly unrelated, rebuild on the new HEAD without altering incoming work.
+5. if clearly unrelated, rebuild on the new `phase-0-foundation` HEAD without altering incoming work.
 
 ---
 
