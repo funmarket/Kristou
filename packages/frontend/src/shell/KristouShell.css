@@ -1,0 +1,274 @@
+@import "@kristou/ui/theme/tokens.css";
+@import "@kristou/ui/theme/global.css";
+
+.k-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--k-bg);
+  color: var(--k-text);
+}
+
+.k-appbar {
+  position: sticky;
+  z-index: 50;
+  top: 0;
+  display: flex;
+  min-height: calc(64px + var(--k-safe-top));
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding:
+    calc(8px + var(--k-safe-top))
+    calc(10px + var(--k-safe-right))
+    8px
+    calc(10px + var(--k-safe-left));
+  border-bottom: 1px solid var(--k-line);
+  background: color-mix(in srgb, var(--k-surface) 94%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.k-brand {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.k-brand-logo {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.k-brand-copy {
+  display: grid;
+  min-width: 0;
+  line-height: 1.05;
+}
+
+.k-brand-copy strong {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-brand-copy small {
+  margin-top: 3px;
+  color: var(--k-text-muted);
+  font-size: 10px;
+}
+
+.k-appbar-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+}
+
+.k-icon-button,
+.k-account-button,
+.k-close-button {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-control);
+  background: var(--k-surface-raised);
+  color: var(--k-text);
+  cursor: pointer;
+}
+
+.k-icon-button,
+.k-close-button {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-size: 19px;
+}
+
+.k-account-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 9px 4px 5px;
+}
+
+.k-avatar-placeholder {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--k-teal);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.k-account-label {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.k-shell-main {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: 18px max(14px, var(--k-safe-right)) calc(34px + var(--k-safe-bottom))
+    max(14px, var(--k-safe-left));
+}
+
+.k-panel-backdrop {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  border: 0;
+  background: var(--k-overlay);
+  cursor: default;
+}
+
+.k-panel {
+  position: fixed;
+  z-index: 90;
+  overflow: auto;
+  border: 1px solid var(--k-line);
+  background: var(--k-surface);
+  color: var(--k-text);
+  box-shadow: var(--k-shadow);
+}
+
+.k-account-sheet,
+.k-notifications-panel {
+  inset: auto 0 0;
+  width: 100%;
+  max-height: min(88dvh, 760px);
+  padding: 10px 16px calc(18px + var(--k-safe-bottom));
+  border-radius: 24px 24px 0 0;
+}
+
+.k-account-sheet::before,
+.k-notifications-panel::before {
+  display: block;
+  width: 42px;
+  height: 4px;
+  margin: 0 auto 10px;
+  border-radius: 999px;
+  background: var(--k-line);
+  content: "";
+}
+
+.k-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+}
+
+.k-panel-header h2 {
+  margin: 0;
+  font-size: 23px;
+}
+
+.k-close-button {
+  margin-inline-start: auto;
+  border-radius: 50%;
+}
+
+.k-empty-state {
+  margin: 24px 0;
+  color: var(--k-text-muted);
+  text-align: center;
+}
+
+.k-settings-group {
+  display: grid;
+  gap: 10px;
+  padding: 14px 0;
+  border-top: 1px solid var(--k-line);
+}
+
+.k-settings-group small {
+  display: block;
+  margin-top: 4px;
+  color: var(--k-text-muted);
+}
+
+.k-segmented-control,
+.k-language-grid {
+  display: grid;
+  gap: 7px;
+}
+
+.k-segmented-control {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.k-language-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.k-segmented-control button,
+.k-language-grid button {
+  min-height: 44px;
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-control);
+  background: var(--k-surface-raised);
+  color: var(--k-text);
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.k-segmented-control button.is-active,
+.k-language-grid button.is-active {
+  border-color: var(--k-teal);
+  background: color-mix(in srgb, var(--k-teal) 12%, var(--k-surface));
+}
+
+[dir="rtl"] .k-brand-copy {
+  text-align: right;
+}
+
+@media (max-width: 359px) {
+  .k-brand-copy small,
+  .k-account-label {
+    display: none;
+  }
+}
+
+@media (min-width: 720px) {
+  .k-appbar {
+    min-height: 72px;
+    padding-inline: max(18px, calc((100vw - 1180px) / 2));
+  }
+
+  .k-brand-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .k-brand-copy strong {
+    font-size: 16px;
+  }
+
+  .k-brand-copy small {
+    font-size: 11px;
+  }
+
+  .k-account-sheet,
+  .k-notifications-panel {
+    top: calc(82px + var(--k-safe-top));
+    right: max(18px, calc((100vw - 1180px) / 2));
+    bottom: auto;
+    left: auto;
+    width: min(390px, calc(100vw - 36px));
+    max-height: calc(100dvh - 104px - var(--k-safe-top));
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .k-account-sheet::before,
+  .k-notifications-panel::before {
+    display: none;
+  }
+}
