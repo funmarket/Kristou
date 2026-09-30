@@ -4,7 +4,7 @@ import test from "node:test";
 
 test("build:web builds ui, frontend, then web in dependency order", async () => {
   const manifest = JSON.parse(
-    await readFile(new URL("../../package.json", import.meta.url), "utf8"),
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
   );
 
   assert.equal(
