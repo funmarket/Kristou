@@ -26,13 +26,13 @@ Current merged Phase 0 implementation evidence on `phase-0-foundation` includes:
 - API liveness/readiness foundation;
 - Worker lifecycle/readiness foundation;
 - phone-first shared UI/frontend foundation;
-- Web shell with Light default, Pitch Black dark mode, AR/FR/EN direction support, and governed mobile scroll behavior.
+- Web shell with Light default, Pitch Black dark mode, AR/FR/EN direction support, and governed mobile scroll behavior;
+- Telegram runtime facade merged through Task 5;
+- foundation PostgreSQL/Prisma source implementation merged through Task 6B, limited to User, WebCredential, WebSession, TelegramIdentity, AccountLinkChallenge, AuditLog, and OutboxEvent.
 
-The Telegram runtime facade in this branch is an **unmerged Task 5 candidate** and must not be treated as integration truth until explicitly merged.
+Task 6B runtime GREEN proof is still pending. Source merge is not runtime proof. Required runtime evidence remains Prisma client generation, Prisma schema validation, application of the existing foundation migration to disposable PostgreSQL, and the focused database integration suite.
 
 Still not implemented/verified as merged product capability:
-
-- database schema/migrations;
 - Redis-backed business behavior;
 - object-storage runtime;
 - authentication/session flows;
@@ -239,3 +239,29 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - OutboxEvent includes status, attempts, available-at, claimed-at, delivered-at and last-error fields.
 - Runtime proof remains pending because the available execution container has no local Prisma/PostgreSQL tooling and DNS cannot resolve GitHub/npm hosts. Do not claim Prisma validation, migration execution, or integration-test GREEN until a supported runtime runs those commands.
 - No auth routes/services, Telegram initData validation, account-link claim implementation, deployment, or Task 7 work were started.
+
+
+### Task 6B.1 — Foundation integration-test contract candidate
+
+- Integration baseline: `phase-0-foundation@124c3be70817f711f87380a73fddadcac1a35ee8`.
+- Task branch: `foundation/task-6b1-integration-test-contract`.
+- Fresh start state: no open PRs; `main` and `phase-0-foundation` were not mutated.
+- Confirmed `scripts/run-tests.mjs` ignored optional supplied test paths.
+- Added focused regression coverage for runner filtering:
+  - RED: requesting one integration-test path still executed both fixture integration tests;
+  - GREEN after minimal runner fix: requested path runs only that test, while no-path execution still runs all integration tests;
+  - focused runner regression suite: **2/2 PASS** in the ChatGPT container.
+- Expanded `tests/database/foundation.integration.test.ts` so the eventual PostgreSQL proof exercises all seven Task 6B foundation models:
+  - User;
+  - WebCredential;
+  - WebSession;
+  - TelegramIdentity;
+  - AccountLinkChallenge;
+  - AuditLog;
+  - OutboxEvent.
+- The strengthened contract covers canonical Web/Telegram ownership, unique login username, optional email, Telegram identity uniqueness, token-hash-only session persistence, expiry/revocation representation, hashed account-link verifier state, failed attempts, concurrency-safe single consumption, safe audit references/metadata, and outbox pending/claim/retry/failure/delivery fields.
+- AuditLog source/runtime assertions only prove that the model has no secret-specific top-level persistence fields and that safe metadata round-trips. Application-level sanitization of arbitrary JSON metadata remains a later responsibility and is not claimed by this database contract.
+- No Prisma schema or migration change was required by the source contract.
+- TypeScript syntax stripping/check for the expanded foundation integration test: **PASS**.
+- PostgreSQL runtime proof remains blocked in this environment; do not call Task 6B runtime-GREEN until Prisma generation/validation, migration application, and the focused database integration suite pass against disposable PostgreSQL.
+- Status: **SOURCE/TEST-CONTRACT CANDIDATE ONLY — NOT MERGED**.
