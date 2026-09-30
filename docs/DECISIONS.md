@@ -24,6 +24,14 @@ Dedicated ADR files may be added under `docs/adr/` when a decision needs deeper 
 
 ---
 
+## ADR-012 — Web login uses username + password; email is optional
+
+**Decision:** KRISTOU Web authentication uses one unique normalized login username plus password. Email is optional, is not a Web login identifier, and is not password-recovery authority unless a separately implemented verified-email flow establishes ownership. A Telegram-originated canonical User may later attach one WebCredential to the same `User.id`; doing so must not create a second User.
+
+**Reason:** Keep Web login simple and deterministic while preserving one canonical identity across Web and Telegram. Optional contact data must not silently become authentication or recovery authority.
+
+---
+
 ## ADR-003 — Planned runtime split is API, Web, Telegram, Worker
 
 **Decision:** KRISTOU plans four application runtimes: API, Web, Telegram Mini App facade, and Worker.

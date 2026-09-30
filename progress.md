@@ -164,7 +164,7 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - Do not treat those runtime/render checks as verified until Task 8 CI or another supported browser runtime proves them.
 
 
-### Task 5 — Telegram runtime facade candidate
+### Task 5 — Telegram runtime facade
 
 - Integration baseline: `phase-0-foundation@4f6e919b2fb2ca32b66d17a498c0dec69d241050`
 - Task branch: `foundation/task-5-telegram-runtime`
@@ -191,4 +191,26 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - no `TELEGRAM_BOT_TOKEN` dependency or credential is required by the runtime facade.
 - Telegram API behavior was checked against the official Mini Apps documentation for `ready()`, `expand()`, viewport changes, safe-area changes, and content-safe-area changes.
 - Dependency-backed workspace `tsc`/build remains unverified in this container because npm-registry access is unavailable; Task 8 CI remains the authoritative dependency-backed gate.
-- Status: **REVIEW-READY CANDIDATE — NOT MERGED**.
+- Status: **MERGED** into `phase-0-foundation` at merge commit `58df42bc51b58eaa38124a5a3c1319ac827b26fe`.
+
+
+### Task 6A — Identity contract + RED persistence invariants
+
+- Integration baseline: `phase-0-foundation@58df42bc51b58eaa38124a5a3c1319ac827b26fe`
+- Task branch: `foundation/task-6-foundation-persistence`
+- Product-owner decision locked:
+  - Web login uses one unique normalized login username + password;
+  - email is optional;
+  - email is not a Web login identifier;
+  - optional email is not password-recovery authority without a separately verified-email flow;
+  - Telegram and Web credentials attach to the same canonical `User.id`.
+- `requirements.md`, `docs/CANONICAL_MODEL.md`, and `docs/DECISIONS.md` were reconciled; ADR-012 records the login-policy decision.
+- Added RED database integration contract at `tests/database/foundation.integration.test.ts` covering:
+  - unique Web login username;
+  - one canonical User with both WebCredential and TelegramIdentity;
+  - Telegram identity uniqueness across Users;
+  - account-link challenge verifier/expiry/consumption fields;
+  - concurrency-safe single consumption using a conditional database update.
+- RED proof observed before database implementation: the focused test fails with `ERR_MODULE_NOT_FOUND` for the intentionally absent `packages/database/src/index.ts`.
+- No Prisma schema, migration, database package, auth service/routes, Telegram initData validation, or linking service implementation has been added by Task 6A.
+- Full real Web↔Telegram signed-initData end-to-end behavior remains a later Identity/Auth service integration proof after the database foundation exists.
