@@ -214,3 +214,31 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - RED proof observed before database implementation: the focused test fails with `ERR_MODULE_NOT_FOUND` for the intentionally absent `packages/database/src/index.ts`.
 - No Prisma schema, migration, database package, auth service/routes, Telegram initData validation, or linking service implementation has been added by Task 6A.
 - Full real Web↔Telegram signed-initData end-to-end behavior remains a later Identity/Auth service integration proof after the database foundation exists.
+
+
+### Task 6B — Foundation database implementation candidate
+
+- Parent contract branch: `foundation/task-6-foundation-persistence@957a1650ee7a10cb22f502d455d9e3685deab489`
+- Task branch: `foundation/task-6b-database-foundation`
+- Added `@kristou/database` workspace with Prisma 6.19.3 / PostgreSQL authority.
+- Added foundation Prisma models only:
+  - `User`
+  - `WebCredential`
+  - `WebSession`
+  - `TelegramIdentity`
+  - `AccountLinkChallenge`
+  - `AuditLog`
+  - `OutboxEvent`
+- Added the initial PostgreSQL migration and Prisma migration provider lock.
+- Registered the database workspace in `package-lock.json`.
+- Source-contract postchecks confirm:
+  - Web login username is unique;
+  - Telegram user ID is unique;
+  - WebCredential and TelegramIdentity both reference the same canonical User owner;
+  - AccountLinkChallenge has a unique verifier hash plus expiry, consumed-at, failed-attempt, and created-at state;
+  - WebSession persists only a `tokenHash` field, not a raw session-token field;
+  - OutboxEvent includes pending/processing/delivered/failed status plus attempts, availability, claim, delivery, and failure fields.
+- Exact Task 6B diff against the Task 6A parent is limited to seven database/package-lock files.
+- Verification gap: this environment cannot resolve GitHub/npm hosts and has no local PostgreSQL/Prisma installation. Therefore `prisma validate`, client generation, migration execution, and the PostgreSQL integration test are **not yet runtime-proven**. Do not call Task 6B GREEN until those commands run successfully in CI or another supported runtime.
+- No auth service/routes, Telegram initData validation, account-link claim service, product-domain tables, deployment, or Task 7 work were added.
+- Status: **IMPLEMENTATION CANDIDATE — SOURCE-SCOPE VERIFIED; RUNTIME GREEN PROOF PENDING**.
