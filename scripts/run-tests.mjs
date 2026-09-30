@@ -4,12 +4,13 @@ import { spawnSync } from "node:child_process";
 
 const mode = process.argv[2] ?? "unit";
 if (!["unit", "integration"].includes(mode)) {
-  console.error("Usage: node scripts/run-tests.mjs <unit|integration>");
+  console.error("Usage: node scripts/run-tests.mjs <unit|integration> [test-path ...]");
   process.exit(2);
 }
 
 const root = process.cwd();
 const testsRoot = path.join(root, "tests");
+const requestedTests = new Set(process.argv.slice(3).map((file) => path.resolve(root, file)));
 const testPattern = /\.test\.(?:ts|tsx|js|mjs)$/;
 const integrationPattern = /\.integration\.test\.(?:ts|tsx|js|mjs)$/;
 
@@ -36,6 +37,7 @@ const selected = allTests
   .filter((file) =>
     mode === "integration" ? integrationPattern.test(file) : !integrationPattern.test(file),
   )
+  .filter((file) => requestedTests.size === 0 || requestedTests.has(path.resolve(file)))
   .sort();
 
 if (selected.length === 0) {
