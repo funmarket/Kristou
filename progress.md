@@ -214,3 +214,28 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - RED proof observed before database implementation: the focused test fails with `ERR_MODULE_NOT_FOUND` for the intentionally absent `packages/database/src/index.ts`.
 - No Prisma schema, migration, database package, auth service/routes, Telegram initData validation, or linking service implementation has been added by Task 6A.
 - Full real Web↔Telegram signed-initData end-to-end behavior remains a later Identity/Auth service integration proof after the database foundation exists.
+
+
+### Task 6B — Foundation database candidate re-integrated from current phase head
+
+- Live integration baseline rechecked: `phase-0-foundation@74a73f9377de858648dacce8b56b429d066f7432`.
+- PR #6 is merged into `phase-0-foundation`; PR #7 is also marked merged, but its merge target was the Task 6A branch, so the database files were not present on the live integration branch.
+- Clean follow-up branch: `foundation/task-6b-database-foundation-v2`, created directly from the current live integration head.
+- Re-applied only the previously reviewed Task 6B database files:
+  - `package-lock.json`
+  - `packages/database/package.json`
+  - `packages/database/tsconfig.json`
+  - `packages/database/src/index.ts`
+  - `packages/database/prisma/schema.prisma`
+  - `packages/database/prisma/migrations/20260930000000_foundation/migration.sql`
+  - `packages/database/prisma/migrations/migration_lock.toml`
+- Source postcheck confirms the branch is one commit ahead, zero behind `phase-0-foundation`, and contains no product-domain tables.
+- Verified source constraints:
+  - unique normalized Web login username field;
+  - unique Telegram user ID field;
+  - WebCredential and TelegramIdentity each reference canonical `User.id`;
+  - WebSession stores `tokenHash`, not a raw session token field;
+  - AccountLinkChallenge stores a unique verifier hash plus expiry, consumed-at, failed-attempt and creation state;
+  - OutboxEvent includes status, attempts, available-at, claimed-at, delivered-at and last-error fields.
+- Runtime proof remains pending because the available execution container has no local Prisma/PostgreSQL tooling and DNS cannot resolve GitHub/npm hosts. Do not claim Prisma validation, migration execution, or integration-test GREEN until a supported runtime runs those commands.
+- No auth routes/services, Telegram initData validation, account-link claim implementation, deployment, or Task 7 work were started.
