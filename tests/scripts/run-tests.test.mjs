@@ -42,9 +42,12 @@ test("b", () => appendFileSync(process.env.KRISTOU_TEST_TRACE, "B\\n"));
 
 async function runFixture(root, args) {
   const trace = path.join(root, "trace.txt");
+  const childEnv = { ...process.env, KRISTOU_TEST_TRACE: trace };
+  delete childEnv.NODE_TEST_CONTEXT;
+
   const result = spawnSync(process.execPath, [runner, ...args], {
     cwd: root,
-    env: { ...process.env, KRISTOU_TEST_TRACE: trace },
+    env: childEnv,
     encoding: "utf8",
   });
 
@@ -75,7 +78,7 @@ test("integration mode without a supplied path still runs every integration test
     const { result, recorded } = await runFixture(root, ["integration"]);
 
     assert.equal(result.status, 0, result.stderr || result.stdout);
-    assert.equal(recorded, "A\nB\n");
+    assert.deepEqual(recorded.trim().split("\n").sort(), ["A", "B"]);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
