@@ -86,6 +86,7 @@ Kristou/
 ### Task 1: Bootstrap the workspace and verification toolchain
 
 **Files:**
+
 - Create: `package.json`
 - Create: `package-lock.json`
 - Create: `tsconfig.base.json`
@@ -99,6 +100,7 @@ Kristou/
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces root commands used by every later task: `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run architecture:check`, `npm run deploy:preflight`, `npm run check`.
 - Establishes npm workspace globs `apps/*` and `packages/*`.
 
@@ -133,6 +135,7 @@ Pin exact versions in the committed lockfile. Do not use floating unpinned works
 - [ ] **Step 4: Implement `scripts/architecture-check.mjs` with foundation-only dependency rules.**
 
 It must fail when:
+
 - an app is imported by a package;
 - `packages/domain` imports API/HTTP/database infrastructure;
 - frontend packages import `packages/database`;
@@ -142,6 +145,7 @@ It must fail when:
 - [ ] **Step 5: Implement `scripts/deploy-preflight.mjs`.**
 
 At this stage it checks only repository/deploy prerequisites that can be known locally:
+
 - package lock exists;
 - required root scripts exist;
 - production-required environment variables are enumerated by config package once Task 2 exists;
@@ -150,6 +154,7 @@ At this stage it checks only repository/deploy prerequisites that can be known l
 - [ ] **Step 6: Run the workspace bootstrap verification.**
 
 Run:
+
 ```bash
 npm ci
 npm run format:check
@@ -164,6 +169,7 @@ Expected: PASS. `npm run typecheck/build/test` may remain partial until workspac
 - [ ] **Step 8: Commit.**
 
 Suggested commit:
+
 ```text
 chore: bootstrap KRISTOU workspace toolchain
 ```
@@ -173,6 +179,7 @@ chore: bootstrap KRISTOU workspace toolchain
 ### Task 2: Create focused shared package skeletons and config authority
 
 **Files:**
+
 - Create: `packages/config/package.json`
 - Create: `packages/config/tsconfig.json`
 - Create: `packages/config/src/index.ts`
@@ -191,12 +198,14 @@ chore: bootstrap KRISTOU workspace toolchain
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces `loadApiConfig(env)`, `loadWorkerConfig(env)`, and `loadWebPublicConfig(env)`.
 - Produces shared primitive exports only; no feature-domain contracts yet.
 
 - [ ] **Step 1: Write config tests first.**
 
 Tests must prove:
+
 - development can use explicit local values;
 - production rejects missing `DATABASE_URL`, `REDIS_URL`, session secret/pepper, and allowed origin configuration once those runtimes require them;
 - public Web config cannot expose `TELEGRAM_BOT_TOKEN`, `DATABASE_URL`, session pepper, or object-storage secrets;
@@ -231,6 +240,7 @@ Expected: PASS.
 - [ ] **Step 7: Update docs/progress and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU configuration authority
 ```
@@ -240,6 +250,7 @@ feat: add KRISTOU configuration authority
 ### Task 3: Bootstrap the API and Worker runtimes with health contracts
 
 **Files:**
+
 - Create: `apps/api/package.json`
 - Create: `apps/api/tsconfig.json`
 - Create: `apps/api/src/bootstrap/server.ts`
@@ -254,6 +265,7 @@ feat: add KRISTOU configuration authority
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - API produces `GET /health/live` and `GET /health/ready`.
 - Worker produces process/runtime health primitives that later deployment health checks can call or expose through the chosen worker health adapter.
 - Both consume `@kristou/config`.
@@ -261,6 +273,7 @@ feat: add KRISTOU configuration authority
 - [ ] **Step 1: Write failing API health/startup tests.**
 
 Assertions:
+
 - liveness returns 200 when process is up;
 - readiness fails when mandatory runtime dependencies are not initialized;
 - invalid production configuration stops startup before serving requests.
@@ -286,6 +299,7 @@ Expected: PASS.
 - [ ] **Step 5: Update `progress.md` and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU API and worker foundations
 ```
@@ -295,6 +309,7 @@ feat: add KRISTOU API and worker foundations
 ### Task 4: Implement the phone-first UI/design-system foundation and Web shell
 
 **Files:**
+
 - Create: `packages/ui/package.json`
 - Create: `packages/ui/tsconfig.json`
 - Create: `packages/ui/src/index.tsx`
@@ -318,6 +333,7 @@ feat: add KRISTOU API and worker foundations
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces `KristouShell`, theme tokens, locale/direction primitives, and official logo asset.
 - Web app consumes shared shell rather than duplicating it.
 
@@ -330,6 +346,7 @@ No image-generation/editing step is allowed.
 - [ ] **Step 2: Write failing shell/theme/i18n tests.**
 
 Must assert:
+
 - default document/theme is Light even when OS preference is dark;
 - toggling dark produces `data-theme="dark"` and `#000000` foundation;
 - Arabic switches document direction to RTL;
@@ -340,6 +357,7 @@ Must assert:
 - [ ] **Step 3: Implement semantic theme tokens.**
 
 Required baseline:
+
 ```text
 Light:
   background: light/white
@@ -353,11 +371,13 @@ KRISTOU teal/gold are accents only.
 - [ ] **Step 4: Implement governed scroll behavior.**
 
 Mobile/touch:
+
 - preserve native overflow scrolling;
 - hide/transparent scrollbar chrome;
 - never disable scrolling merely to hide scrollbars.
 
 Desktop/pointer:
+
 - thin, low-contrast scrollbar;
 - transparent track;
 - subtle thumb only when useful.
@@ -371,6 +391,7 @@ Start with shell/navigation/settings strings only. Do not duplicate components p
 - [ ] **Step 6: Implement the approved phone-first shell.**
 
 Header:
+
 ```text
 [official KRISTOU logo + KRISTOU SCHOOL] [bell] [avatar]
 ```
@@ -390,6 +411,7 @@ Expected: PASS.
 - [ ] **Step 8: Perform manual responsive QA at representative phone widths.**
 
 At minimum:
+
 - 320 px;
 - 360 px;
 - 390/393 px;
@@ -401,6 +423,7 @@ Check Light, Pitch Black, Arabic RTL, English/French LTR, sheets, header, and sc
 - [ ] **Step 9: Update progress/docs and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU phone-first UI foundation
 ```
@@ -410,6 +433,7 @@ feat: add KRISTOU phone-first UI foundation
 ### Task 5: Create the Telegram runtime facade without a bot credential
 
 **Files:**
+
 - Create: `apps/telegram/package.json`
 - Create: `apps/telegram/tsconfig.json`
 - Create: `apps/telegram/src/index.ts`
@@ -418,6 +442,7 @@ feat: add KRISTOU phone-first UI foundation
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces a Telegram-specific runtime adapter for viewport/safe-area/lifecycle behavior.
 - Reuses `@kristou/frontend` and `@kristou/ui`.
 - Does **not** yet require `TELEGRAM_BOT_TOKEN`.
@@ -435,6 +460,7 @@ No Telegram auth validation yet; no bot token; no account-linking endpoint.
 - [ ] **Step 4: Run build/typecheck/tests and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU Telegram runtime facade
 ```
@@ -444,6 +470,7 @@ feat: add KRISTOU Telegram runtime facade
 ### Task 6: Create PostgreSQL/Prisma foundation and canonical identity/audit/outbox schema
 
 **Files:**
+
 - Create: `packages/database/package.json`
 - Create: `packages/database/tsconfig.json`
 - Create: `packages/database/src/index.ts`
@@ -455,6 +482,7 @@ feat: add KRISTOU Telegram runtime facade
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces canonical persistence for only foundation entities:
   - `User`
   - `WebCredential`
@@ -468,6 +496,7 @@ feat: add KRISTOU Telegram runtime facade
 - [ ] **Step 1: Write real disposable-PostgreSQL integration tests for foundation invariants.**
 
 At minimum:
+
 - one Telegram identity belongs to at most one User;
 - one Web credential login identifier maps unambiguously according to chosen auth identifier policy;
 - raw session token is not stored;
@@ -494,6 +523,7 @@ Expected: PASS.
 - [ ] **Step 5: Reconcile canonical-model docs, update progress, and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU foundation persistence
 ```
@@ -503,6 +533,7 @@ feat: add KRISTOU foundation persistence
 ### Task 7: Add authentication primitives and session security
 
 **Files:**
+
 - Create: `packages/auth/package.json`
 - Create: `packages/auth/tsconfig.json`
 - Create: `packages/auth/src/index.ts`
@@ -515,6 +546,7 @@ feat: add KRISTOU foundation persistence
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces:
   - `hashPassword(password): Promise<string>`
   - `verifyPassword(hash, password): Promise<boolean>`
@@ -537,6 +569,7 @@ Tests use synthetic/test secrets only. No real Telegram token is needed.
 - [ ] **Step 5: Run auth tests/typecheck/security checks and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU auth primitives
 ```
@@ -546,6 +579,7 @@ feat: add KRISTOU auth primitives
 ### Task 8: Establish CI, security baseline, and full local foundation proof
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 - Create or modify: security/architecture test fixtures as needed
 - Modify: `README.md`
@@ -553,12 +587,14 @@ feat: add KRISTOU auth primitives
 - Modify: `docs/LIVING_BUILD_PLAN.md` only if actual execution commands differ from the documented discipline
 
 **Interfaces:**
+
 - CI is read-only verification.
 - Produces the required local/CI gate before infrastructure creation.
 
 - [ ] **Step 1: Configure CI to run on pushes/PRs without modifying repository files.**
 
 Required:
+
 ```text
 npm ci
 npm run db:generate
@@ -584,6 +620,7 @@ If a secret scanner is introduced, pin/version its invocation and make CI read-o
 - [ ] **Step 3: Add a build-output secret-leak assertion.**
 
 Fail if Web/Telegram bundle text contains names/values of private variables such as:
+
 - `TELEGRAM_BOT_TOKEN`
 - `DATABASE_URL`
 - session pepper
@@ -605,6 +642,7 @@ This successful gate unlocks **Task 9: staging infrastructure creation**.
 - [ ] **Step 6: Commit.**
 
 Suggested commit:
+
 ```text
 ci: enforce KRISTOU foundation gates
 ```
@@ -618,6 +656,7 @@ ci: enforce KRISTOU foundation gates
 **Precondition:** Task 8 is green locally and in CI at an exact commit SHA.
 
 **Railway target:**
+
 - one KRISTOU staging project/environment;
 - API service from `apps/api`;
 - Worker service from `apps/worker`;
@@ -627,12 +666,14 @@ ci: enforce KRISTOU foundation gates
 - health checks wired to the implemented health contracts.
 
 **Cloudflare target:**
+
 - KRISTOU Web frontend/edge project targeting the exact Web build;
 - staging/preview environment first;
 - public API base URL points only to Railway staging API;
 - optional Workers/R2/AI resources are **not** created unless the current implementation slice actually needs them.
 
 **Files (only after resources exist):**
+
 - Modify/create deployment configuration actually required by the chosen providers
 - Modify: `.env.example` only if real variable names changed
 - Modify: `README.md`
@@ -661,6 +702,7 @@ Production resources/aliases remain out of scope.
 **This is the first point at which a temporary Telegram bot token is needed.**
 
 **Preconditions:**
+
 - Task 9 staging API/Web are reachable through stable staging URLs;
 - private env handling is proven;
 - `packages/auth` Telegram initData validator exists and is tested;
@@ -674,6 +716,7 @@ Do not use the future production bot.
 - [ ] **Step 2: Store the token only in Railway/staging private secrets as `TELEGRAM_BOT_TOKEN`.**
 
 Never paste the token into:
+
 - GitHub files;
 - Web/Telegram frontend environment variables;
 - screenshots;

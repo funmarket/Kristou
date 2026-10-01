@@ -393,15 +393,15 @@ Do not use a lower evidence tier to claim a higher one.
 
 Completion reports use a score out of 10 for the exact assigned scope.
 
-| Area | Weight | Evidence expected |
-| --- | ---: | --- |
-| Canonical ownership / architecture | 2.0 | Correct owner, dependency direction, no duplicate authority |
-| Behavioral correctness | 2.0 | Focused tests for accepted behavior/edge cases |
-| Authorization / privacy / security | 1.5 | Server-side scope and security checks proven |
-| Persistence / concurrency / async correctness | 1.5 | Relevant real integration/idempotency evidence |
-| Web/Telegram/UI behavior | 1.0 | Connected user flow and responsive/i18n/theme proof where applicable |
-| Documentation consistency | 1.0 | Governing docs reconciled |
-| Runtime/deployment evidence | 1.0 | Required only when runtime/deployment is part of the scope |
+| Area                                          | Weight | Evidence expected                                                    |
+| --------------------------------------------- | -----: | -------------------------------------------------------------------- |
+| Canonical ownership / architecture            |    2.0 | Correct owner, dependency direction, no duplicate authority          |
+| Behavioral correctness                        |    2.0 | Focused tests for accepted behavior/edge cases                       |
+| Authorization / privacy / security            |    1.5 | Server-side scope and security checks proven                         |
+| Persistence / concurrency / async correctness |    1.5 | Relevant real integration/idempotency evidence                       |
+| Web/Telegram/UI behavior                      |    1.0 | Connected user flow and responsive/i18n/theme proof where applicable |
+| Documentation consistency                     |    1.0 | Governing docs reconciled                                            |
+| Runtime/deployment evidence                   |    1.0 | Required only when runtime/deployment is part of the scope           |
 
 Scoring rules:
 

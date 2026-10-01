@@ -5,10 +5,7 @@ export interface SafeAreaInsets {
   left: number;
 }
 
-export type TelegramEvent =
-  | "viewportChanged"
-  | "safeAreaChanged"
-  | "contentSafeAreaChanged";
+export type TelegramEvent = "viewportChanged" | "safeAreaChanged" | "contentSafeAreaChanged";
 
 export interface TelegramWebAppBridge {
   readonly platform?: string;
@@ -61,11 +58,7 @@ function px(value: number | undefined): string | undefined {
   return typeof value === "number" && Number.isFinite(value) ? `${value}px` : undefined;
 }
 
-function setOrRemove(
-  target: CssVariableTarget,
-  name: string,
-  value: string | undefined,
-): void {
+function setOrRemove(target: CssVariableTarget, name: string, value: string | undefined): void {
   if (value === undefined) {
     target.style.removeProperty(name);
     return;
@@ -90,16 +83,8 @@ export function createTelegramRuntime(
   };
 
   const syncViewport = () => {
-    setOrRemove(
-      target,
-      "--k-telegram-viewport-height",
-      px(bridge.viewportHeight),
-    );
-    setOrRemove(
-      target,
-      "--k-telegram-viewport-stable-height",
-      px(bridge.viewportStableHeight),
-    );
+    setOrRemove(target, "--k-telegram-viewport-height", px(bridge.viewportHeight));
+    setOrRemove(target, "--k-telegram-viewport-stable-height", px(bridge.viewportStableHeight));
   };
 
   const mount = () => {

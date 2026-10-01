@@ -33,6 +33,7 @@ Current merged Phase 0 implementation evidence on `phase-0-foundation` includes:
 Task 6B runtime GREEN proof is still pending. Source merge is not runtime proof. Required runtime evidence remains Prisma client generation, Prisma schema validation, application of the existing foundation migration to disposable PostgreSQL, and the focused database integration suite.
 
 Still not implemented/verified as merged product capability:
+
 - Redis-backed business behavior;
 - object-storage runtime;
 - authentication/session flows;
@@ -67,7 +68,6 @@ Architecture belongs in `structure.md`.
 Canonical data authority belongs in `docs/CANONICAL_MODEL.md`.  
 Architectural decisions belong in `docs/DECISIONS.md`.
 
-
 ## Phase 0 implementation
 
 ### Task 1 — Workspace/toolchain
@@ -90,7 +90,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - `npm run build` — PASS with no app/package workspaces yet
 - Package installation is **not yet verified** because outbound npm registry access is unavailable in the ChatGPT container. Do not claim `npm ci`, ESLint, Prettier, or dependency-backed workspace builds as green until CI or another connected runtime proves them.
 
-
 ### Task 2 — Shared package skeletons + config authority
 
 - Integration baseline: `phase-0-foundation@a9358e0f45538627dcca60d5c00664103c97137c`
@@ -108,7 +107,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - package-lock workspace link for `@kristou/config` — PASS
   - lockfile Zod version matches manifest (`4.4.3`) — PASS
 - Dependency-backed config tests / full package typecheck are **not yet runtime-proven** because outbound npm-registry access is unavailable in the ChatGPT container. This remains an explicit verification gap until CI is available.
-
 
 ### Task 3 — API + Worker runtime foundations
 
@@ -129,7 +127,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - architecture dependency guard over API/Worker -> config dependency direction — PASS
   - lockfile workspace registration for `@kristou/api` and `@kristou/worker` — PASS
 - Dependency-backed HTTP tests, package typecheck, and build are **not yet runtime-proven** because outbound npm-registry access is unavailable in the ChatGPT container. These remain explicit CI verification gaps until Task 8.
-
 
 ### Task 4 — Phone-first UI/design-system + Web shell
 
@@ -163,7 +160,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - rendered browser QA at 320/360/393/430/desktop could not be completed because the available headless Chromium process hangs on the container DBus/headless environment.
 - Do not treat those runtime/render checks as verified until Task 8 CI or another supported browser runtime proves them.
 
-
 ### Task 5 — Telegram runtime facade
 
 - Integration baseline: `phase-0-foundation@4f6e919b2fb2ca32b66d17a498c0dec69d241050`
@@ -193,7 +189,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - Dependency-backed workspace `tsc`/build remains unverified in this container because npm-registry access is unavailable; Task 8 CI remains the authoritative dependency-backed gate.
 - Status: **MERGED** into `phase-0-foundation` at merge commit `58df42bc51b58eaa38124a5a3c1319ac827b26fe`.
 
-
 ### Task 6A — Identity contract + RED persistence invariants
 
 - Integration baseline: `phase-0-foundation@58df42bc51b58eaa38124a5a3c1319ac827b26fe`
@@ -214,7 +209,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - RED proof observed before database implementation: the focused test fails with `ERR_MODULE_NOT_FOUND` for the intentionally absent `packages/database/src/index.ts`.
 - No Prisma schema, migration, database package, auth service/routes, Telegram initData validation, or linking service implementation has been added by Task 6A.
 - Full real Web↔Telegram signed-initData end-to-end behavior remains a later Identity/Auth service integration proof after the database foundation exists.
-
 
 ### Task 6B — Foundation database candidate re-integrated from current phase head
 
@@ -239,7 +233,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
   - OutboxEvent includes status, attempts, available-at, claimed-at, delivered-at and last-error fields.
 - Runtime proof remains pending because the available execution container has no local Prisma/PostgreSQL tooling and DNS cannot resolve GitHub/npm hosts. Do not claim Prisma validation, migration execution, or integration-test GREEN until a supported runtime runs those commands.
 - No auth routes/services, Telegram initData validation, account-link claim implementation, deployment, or Task 7 work were started.
-
 
 ### Task 6B.1 — Foundation integration-test contract candidate
 

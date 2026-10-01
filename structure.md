@@ -276,41 +276,41 @@ Cross-domain collaboration uses explicit application ports/readers/orchestrators
 
 This table identifies the intended authoritative owner for known product concepts. Exact code paths do not exist yet and must not be invented before implementation.
 
-| Canonical concept | Authoritative owner | Notes |
-| --- | --- | --- |
-| User, WebCredential, WebSession, TelegramIdentity, account-link challenges | **Identity & Authentication** | One canonical User across Web and Telegram; no heuristic merge. |
-| Roles, capabilities, scoped authorization policy | **Access Control** | Server-side RBAC + resource/attribute scope. |
-| User-facing parent/student/teacher/manager profile data | **People** | Authentication identity remains owned by Identity. |
-| Parent-child guardian relationship | **Family** | Canonical link used by Parent Notes, class access, pickup authorization checks. |
-| AcademicYear, Level, Class | **Academics** | Class identity/lifecycle authority. |
-| Teacher-to-class assignment | **Academics** | Class-scoped teacher authority source. |
-| EnrollmentApplication, review lifecycle, Enrollment | **Enrollment** | Acceptance does not itself grant class access until enrollment/assignment exists. |
-| Student-to-class active assignment/membership | **Academics** | Must reference valid enrollment; no duplicate class roster authority elsewhere. |
-| Class Announcements | **Class Community** | Private class content scoped by canonical Class membership. |
-| Homework & Classwork | **Class Community** | Teacher-controlled class learning content. |
-| Class Calendar items | **Class Community** | School-wide calendar items remain separate if later modeled. |
-| Class Documents | **Class Community** | Private class content; media bytes use shared storage infrastructure. |
-| Class Gallery | **Class Community** | Private class content. |
-| Student Class Questions and replies | **Class Community** | Class-wide only; no private student DMs initially. |
-| Parent Notes and replies | **Parent Notes** | Own quota/time-window/privacy semantics. |
-| Short operational Message threads/messages | **Messaging** | 200-character rule; must not bypass Parent Notes policy. |
-| Dismissal configuration, pickup state/events, release confirmation | **Pickup** | Safety-critical server authority. |
-| AuthorizedPickupPerson | **Pickup** | Separate concept from Parent role; school-controlled authorization. |
-| SchoolBroadcast | **Broadcasts** | One canonical broadcast; audience projections are not duplicate truth. |
-| User inbox notifications/read state/delivery projections | **Notifications** | Notification is projection/delivery state, not source business truth. |
-| Notification sound/theme/language preference | **Preferences** | Presentation preference only. |
-| Weekly La Toque Gourmande menu and meal content | **Food Menu** | Admin or explicitly authorized Manager may manage. |
-| Public teacher cards/bios/order/visibility | **School Directory** | Public projection/configuration; internal Teacher profile remains People-owned. |
-| Public Administration/School Board cards | **School Directory** | App Admin controls public presentation. |
-| Public homepage/pages/activities/clubs/public gallery | **Public Content** | Public CMS-style content only. |
-| MediaAsset descriptor/lifecycle | **Media** | Product domains own semantic attachment/visibility policy; Media owns generic descriptor lifecycle. |
-| AuditLog | **Audit** | Sensitive operation history; never contains secrets/private message bodies unnecessarily. |
-| OutboxEvent | **Async Foundation** | Durable async handoff infrastructure, not a business domain. |
-| AI Assistant orchestration | **TBD — AI** | Phase 8; do not create durable AI authority before the slice begins. |
-| Grades/report cards | **TBD / out of initial scope** | Do not model until approved. |
-| Attendance | **TBD / out of initial scope** | Pickup is not general attendance. |
-| School transport/bus | **TBD / out of initial scope** | Separate future design required. |
-| Payments | **TBD / out of initial scope** | Do not create speculative payment models. |
+| Canonical concept                                                          | Authoritative owner            | Notes                                                                                               |
+| -------------------------------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------- |
+| User, WebCredential, WebSession, TelegramIdentity, account-link challenges | **Identity & Authentication**  | One canonical User across Web and Telegram; no heuristic merge.                                     |
+| Roles, capabilities, scoped authorization policy                           | **Access Control**             | Server-side RBAC + resource/attribute scope.                                                        |
+| User-facing parent/student/teacher/manager profile data                    | **People**                     | Authentication identity remains owned by Identity.                                                  |
+| Parent-child guardian relationship                                         | **Family**                     | Canonical link used by Parent Notes, class access, pickup authorization checks.                     |
+| AcademicYear, Level, Class                                                 | **Academics**                  | Class identity/lifecycle authority.                                                                 |
+| Teacher-to-class assignment                                                | **Academics**                  | Class-scoped teacher authority source.                                                              |
+| EnrollmentApplication, review lifecycle, Enrollment                        | **Enrollment**                 | Acceptance does not itself grant class access until enrollment/assignment exists.                   |
+| Student-to-class active assignment/membership                              | **Academics**                  | Must reference valid enrollment; no duplicate class roster authority elsewhere.                     |
+| Class Announcements                                                        | **Class Community**            | Private class content scoped by canonical Class membership.                                         |
+| Homework & Classwork                                                       | **Class Community**            | Teacher-controlled class learning content.                                                          |
+| Class Calendar items                                                       | **Class Community**            | School-wide calendar items remain separate if later modeled.                                        |
+| Class Documents                                                            | **Class Community**            | Private class content; media bytes use shared storage infrastructure.                               |
+| Class Gallery                                                              | **Class Community**            | Private class content.                                                                              |
+| Student Class Questions and replies                                        | **Class Community**            | Class-wide only; no private student DMs initially.                                                  |
+| Parent Notes and replies                                                   | **Parent Notes**               | Own quota/time-window/privacy semantics.                                                            |
+| Short operational Message threads/messages                                 | **Messaging**                  | 200-character rule; must not bypass Parent Notes policy.                                            |
+| Dismissal configuration, pickup state/events, release confirmation         | **Pickup**                     | Safety-critical server authority.                                                                   |
+| AuthorizedPickupPerson                                                     | **Pickup**                     | Separate concept from Parent role; school-controlled authorization.                                 |
+| SchoolBroadcast                                                            | **Broadcasts**                 | One canonical broadcast; audience projections are not duplicate truth.                              |
+| User inbox notifications/read state/delivery projections                   | **Notifications**              | Notification is projection/delivery state, not source business truth.                               |
+| Notification sound/theme/language preference                               | **Preferences**                | Presentation preference only.                                                                       |
+| Weekly La Toque Gourmande menu and meal content                            | **Food Menu**                  | Admin or explicitly authorized Manager may manage.                                                  |
+| Public teacher cards/bios/order/visibility                                 | **School Directory**           | Public projection/configuration; internal Teacher profile remains People-owned.                     |
+| Public Administration/School Board cards                                   | **School Directory**           | App Admin controls public presentation.                                                             |
+| Public homepage/pages/activities/clubs/public gallery                      | **Public Content**             | Public CMS-style content only.                                                                      |
+| MediaAsset descriptor/lifecycle                                            | **Media**                      | Product domains own semantic attachment/visibility policy; Media owns generic descriptor lifecycle. |
+| AuditLog                                                                   | **Audit**                      | Sensitive operation history; never contains secrets/private message bodies unnecessarily.           |
+| OutboxEvent                                                                | **Async Foundation**           | Durable async handoff infrastructure, not a business domain.                                        |
+| AI Assistant orchestration                                                 | **TBD — AI**                   | Phase 8; do not create durable AI authority before the slice begins.                                |
+| Grades/report cards                                                        | **TBD / out of initial scope** | Do not model until approved.                                                                        |
+| Attendance                                                                 | **TBD / out of initial scope** | Pickup is not general attendance.                                                                   |
+| School transport/bus                                                       | **TBD / out of initial scope** | Separate future design required.                                                                    |
+| Payments                                                                   | **TBD / out of initial scope** | Do not create speculative payment models.                                                           |
 
 When a future implementation proves a concept belongs elsewhere, update this table and `docs/CANONICAL_MODEL.md` through an explicit architectural decision before code establishes a second authority.
 
