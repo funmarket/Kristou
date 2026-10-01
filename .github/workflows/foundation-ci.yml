@@ -52,3 +52,87 @@ jobs:
 
       - name: Deployment preflight
         run: npm run deploy:preflight
+
+  format-artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format authorized files only
+        run: |
+          ./node_modules/.bin/prettier --write \
+            apps/telegram/src/runtime.ts \
+            docs/DECISIONS.md \
+            docs/LIVING_BUILD_PLAN.md \
+            docs/superpowers/plans/2026-09-29-phase-0-foundation.md \
+            eslint.config.js \
+            packages/config/src/index.ts \
+            packages/frontend/src/shell/KristouShell.css \
+            packages/frontend/src/shell/KristouShell.tsx \
+            packages/ui/src/theme/global.css \
+            progress.md \
+            scripts/architecture-check.mjs \
+            scripts/deploy-preflight.mjs \
+            structure.md \
+            tests/build-web-pipeline.test.mjs \
+            tests/database/foundation.integration.test.ts \
+            tests/frontend/shell.test.tsx
+
+      - name: Verify formatted file set and create patch
+        run: |
+          cat > expected-files.txt <<'EOF'
+          apps/telegram/src/runtime.ts
+          docs/DECISIONS.md
+          docs/LIVING_BUILD_PLAN.md
+          docs/superpowers/plans/2026-09-29-phase-0-foundation.md
+          eslint.config.js
+          packages/config/src/index.ts
+          packages/frontend/src/shell/KristouShell.css
+          packages/frontend/src/shell/KristouShell.tsx
+          packages/ui/src/theme/global.css
+          progress.md
+          scripts/architecture-check.mjs
+          scripts/deploy-preflight.mjs
+          structure.md
+          tests/build-web-pipeline.test.mjs
+          tests/database/foundation.integration.test.ts
+          tests/frontend/shell.test.tsx
+          EOF
+          git diff --name-only | sort > actual-files.txt
+          sort expected-files.txt > expected-files.sorted.txt
+          diff -u expected-files.sorted.txt actual-files.txt
+          git diff --binary -- \
+            apps/telegram/src/runtime.ts \
+            docs/DECISIONS.md \
+            docs/LIVING_BUILD_PLAN.md \
+            docs/superpowers/plans/2026-09-29-phase-0-foundation.md \
+            eslint.config.js \
+            packages/config/src/index.ts \
+            packages/frontend/src/shell/KristouShell.css \
+            packages/frontend/src/shell/KristouShell.tsx \
+            packages/ui/src/theme/global.css \
+            progress.md \
+            scripts/architecture-check.mjs \
+            scripts/deploy-preflight.mjs \
+            structure.md \
+            tests/build-web-pipeline.test.mjs \
+            tests/database/foundation.integration.test.ts \
+            tests/frontend/shell.test.tsx > formatting.patch
+
+      - name: Upload formatting patch
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatting-patch
+          path: formatting.patch
+          if-no-files-found: error
