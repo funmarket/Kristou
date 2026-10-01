@@ -39,10 +39,10 @@ test("discovers every workspace before command participation is considered", asy
     });
 
     const workspaces = await discoverWorkspaces(root);
-    assert.deepEqual(workspaces.map((workspace) => workspace.name), [
-      "@kristou/api",
-      "@kristou/config",
-    ]);
+    assert.deepEqual(
+      workspaces.map((workspace) => workspace.name),
+      ["@kristou/api", "@kristou/config"],
+    );
   });
 });
 
