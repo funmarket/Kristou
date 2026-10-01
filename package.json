@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "dev": "node scripts/run-workspace-script.mjs dev all",
+    "build:web": "npm -w @kristou/config run build && npm -w @kristou/ui run build && npm -w @kristou/frontend run build && npm -w @kristou/web run build",
     "build:packages": "node scripts/run-workspace-script.mjs build packages",
     "build:apps": "node scripts/run-workspace-script.mjs build apps",
     "build": "npm run build:packages && npm run build:apps",
