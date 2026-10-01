@@ -33,6 +33,8 @@ jobs:
         run: npm run db:generate
 
       - name: Validate Prisma schema
+        env:
+          DATABASE_URL: postgresql://kristou_ci:kristou_ci@127.0.0.1:5432/kristou_ci
         run: npm run db:validate
 
       - name: Architecture check
