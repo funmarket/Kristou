@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { applyTheme, DEFAULT_THEME, type Theme } from "@kristou/ui";
 import { applyLocale, translations, type Locale } from "../i18n/index.js";
-import "./KristouShell.css";
 
 export interface KristouShellProps {
   children?: React.ReactNode;
