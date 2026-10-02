@@ -4,36 +4,47 @@ KRISTOU SCHOOL is the clean application platform for École Primaire Privée Kri
 
 This repository is intentionally clean. The HoomaUltimate repository is a read-only process/architecture reference only; no HOOMA product code, schema, routes, runtime, auth, branding, or business rules belong here.
 
-## Repository topology
+## Current Phase 0 topology
 
-Planned foundation:
+Verified deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`.
 
 ```text
 apps/
-  api/
-  web/
-  telegram/
-  worker/
+  api/        # backend HTTP runtime
+  web/        # canonical KRISTOU React application entry and current Railway Web build
+  telegram/   # current Telegram runtime/source package pending one-product ownership recovery
+  worker/     # async runtime foundation
 packages/
-  auth/
   config/
   contracts/
   database/
   domain/
-  frontend/
-  media-processing/
-  storage/
+  frontend/   # shared product shell/feature UI
   testing/
   ui/
 docs/
-AGENTS.md
-structure.md
-requirements.md
-progress.md
-.env.example
+scripts/
+tests/
+.github/
 ```
 
-The exact code topology may be refined only through the architecture authorities in this repository.
+The source tree above is current implementation evidence, not permission to preserve accidental ownership forever. KRISTOU's target architecture is one product frontend: normal Browser and Telegram WebView use the same canonical React/TypeScript product, route authority, feature implementation, API/application/domain behavior, and canonical User. Telegram-specific code may adapt host/runtime mechanics only.
+
+Current known architecture debt: `apps/telegram/src` still owns Telegram runtime source. Recovery work must first move those mechanics into the canonical Web runtime boundary and prove them before removing the superseded owner. Do not create new Telegram product pages, router, shell, state, API client, or business behavior there.
+
+## Current deployment truth
+
+The currently verified public candidate runs on Railway:
+
+- Web service: `web-candidate`
+- Web source branch: `deploy-candidate`
+- Web build command: `npm run build:web`
+- API service: `api-candidate`
+- PostgreSQL and Redis are Railway services in the same KRISTOU project.
+
+Cloudflare is not the current frontend hosting authority. It is reserved for later AI/edge capabilities when that phase is explicitly implemented.
+
+Deployment evidence belongs in `progress.md`; this README must not be used as a substitute for a fresh runtime check.
 
 ## Mandatory reading before implementation
 
@@ -67,7 +78,7 @@ Authoritative subjects are separated:
 - `docs/CANONICAL_MODEL.md` — canonical entities, writes, durable truth, projections;
 - `docs/DECISIONS.md` — architectural decisions and ADR index;
 - `AGENTS.md` + `docs/LIVING_BUILD_PLAN.md` — how work is performed;
-- `progress.md` — current implementation evidence only.
+- `progress.md` — current implementation/deployment evidence only.
 
 Do not create another file that competes with one of these authorities.
 
@@ -75,7 +86,8 @@ Do not create another file that competes with one of these authorities.
 
 The approved product baseline includes:
 
-- one canonical user shared by Web and Telegram;
+- one canonical product frontend for Browser and Telegram WebView;
+- one canonical user shared by Web and Telegram authentication transports;
 - server-side RBAC + resource-scoped authorization;
 - public/general, parent, student, teacher, manager/associate, and App Admin access boundaries;
 - class communities;
@@ -91,16 +103,20 @@ The approved product baseline includes:
 
 See `requirements.md` for accepted behavior rather than treating this README as the full product contract.
 
-## First run
+## Foundation verification
 
-The Phase 0 workspace bootstrap uses Node.js 22 and npm 10.9.2.
+The Phase 0 workspace uses Node.js 22 and npm 10.9.2.
 
 ```bash
 npm ci
 npm run architecture:check
 npm run format:check
 npm run lint
+npm run typecheck
+npm test
+npm run build:web
+npm run build
 npm run deploy:preflight
 ```
 
-The API/Web/Telegram/Worker workspaces are added in later Phase 0 tasks. Until those workspaces exist, full build/typecheck/runtime commands are intentionally not claimed as verified.
+A historical green run does not prove a new head. Use the repository's Foundation CI and the exact current candidate for merge evidence.
