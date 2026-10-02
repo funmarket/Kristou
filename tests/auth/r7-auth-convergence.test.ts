@@ -41,8 +41,8 @@ function signTelegramInitData(
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([key, value]) => `${key}=${value}`)
     .join("\n");
-  const secretKey = createHmac("sha256", "WebAppData").update(botToken).digest();
-  const hash = createHmac("sha256", secretKey).update(dataCheckString).digest("hex");
+  const secretKey = createHmac("sha256", "WebAppData")\n    .update(botToken)\n    .digest();
+  const hash = createHmac("sha256", secretKey)\n    .update(dataCheckString)\n    .digest("hex");
   fields.set("hash", hash);
   return fields.toString();
 }
@@ -56,7 +56,7 @@ class FakeIdentityRepository implements IdentityRepository {
   async findWebCredential(
     loginUsername: string,
   ): Promise<StoredWebCredential | null> {
-    return this.credential?.loginUsername === loginUsername ? this.credential : null;
+    return this.credential?.loginUsername === loginUsername\n      ? this.credential\n      : null;
   }
 
   async createWebSession(input: {
@@ -99,7 +99,7 @@ test("password hashes use Argon2id and reject the wrong password", async () => {
   const hash = await hashPassword("correct horse battery staple");
 
   assert.match(hash, /^\$argon2id\$/);
-  assert.equal(await verifyPassword(hash, "correct horse battery staple"), true);
+  assert.equal(\n    await verifyPassword(hash, "correct horse battery staple"),\n    true,\n  );
   assert.equal(await verifyPassword(hash, "wrong password"), false);
 });
 
@@ -206,13 +206,13 @@ test(
     const nowSeconds = Math.floor(NOW.getTime() / 1000);
 
     const existing = await service.authenticateTelegram(
-      signTelegramInitData({ id: 803441921, username: "linked_parent" }, nowSeconds),
+      signTelegramInitData(\n        { id: 803441921, username: "linked_parent" },\n        nowSeconds,\n      ),
     );
     assert.deepEqual(existing, { userId: "user-canonical-1" });
     assert.equal(repository.createdTelegramUsers, 0);
 
     const created = await service.authenticateTelegram(
-      signTelegramInitData({ id: 803441922, username: "new_parent" }, nowSeconds),
+      signTelegramInitData(\n        { id: 803441922, username: "new_parent" },\n        nowSeconds,\n      ),
     );
     assert.deepEqual(created, { userId: "telegram-user-1" });
     assert.equal(repository.createdTelegramUsers, 1);
@@ -249,7 +249,7 @@ test(
             Math.floor(NOW.getTime() / 1000),
           ),
         }),
-      (error: unknown) => error instanceof AuthError && error.code === "AUTH_CONFLICT",
+      (error: unknown) =>\n        error instanceof AuthError && error.code === "AUTH_CONFLICT",
     );
   },
 );
