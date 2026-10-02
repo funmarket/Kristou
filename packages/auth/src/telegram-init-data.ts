@@ -50,16 +50,10 @@ function parseTelegramUser(raw: string): TelegramInitDataUser {
 
   return {
     telegramUserId: BigInt(user.id),
-    ...(typeof user.username === "string"
-      ? { telegramUsername: user.username }
-      : {}),
-    ...(typeof user.first_name === "string"
-      ? { firstName: user.first_name }
-      : {}),
+    ...(typeof user.username === "string" ? { telegramUsername: user.username } : {}),
+    ...(typeof user.first_name === "string" ? { firstName: user.first_name } : {}),
     ...(typeof user.last_name === "string" ? { lastName: user.last_name } : {}),
-    ...(typeof user.language_code === "string"
-      ? { languageCode: user.language_code }
-      : {}),
+    ...(typeof user.language_code === "string" ? { languageCode: user.language_code } : {}),
   };
 }
 
@@ -93,12 +87,8 @@ export function validateTelegramInitData(
     .map(([key, value]) => `${key}=${value}`)
     .join("\n");
 
-  const secretKey = createHmac("sha256", "WebAppData")
-    .update(botToken)
-    .digest();
-  const expectedHash = createHmac("sha256", secretKey)
-    .update(dataCheckString)
-    .digest();
+  const secretKey = createHmac("sha256", "WebAppData").update(botToken).digest();
+  const expectedHash = createHmac("sha256", secretKey).update(dataCheckString).digest();
   const actualHash = Buffer.from(providedHash, "hex");
 
   if (
