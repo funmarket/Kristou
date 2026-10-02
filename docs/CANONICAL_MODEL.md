@@ -29,8 +29,8 @@ If implementation establishes a different owner for a concept, update this docum
 2. PostgreSQL is durable business truth.
 3. Redis is transient only where explicitly designed.
 4. Object storage holds binary media bytes.
-5. Web and Telegram never own separate business copies.
-6. Read models/projections may duplicate presentation data only when their non-authoritative status is explicit.
+5. Browser and Telegram WebView never own separate business copies, transport-specific canonical records, or competing product authorities. Both delivery contexts consume the same canonical frontend/API/domain records and resolve to the same canonical User.
+6. Read models/projections may duplicate presentation data only when their non-authoritative status is explicit; a projection must never become a second Web-only or Telegram-only write authority.
 7. Cross-domain consumers use application ports/readers, not another domain's concrete repository/ORM model.
 8. Notification/realtime failure never rewrites the canonical business event that triggered it.
 
