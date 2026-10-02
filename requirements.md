@@ -38,7 +38,7 @@ The product is not a generic social network and must not become a catch-all scho
 The following are locked:
 
 1. **Mobile first.** Phone usability is the primary interaction baseline.
-2. **One KRISTOU product.** Web and Telegram are delivery/authentication surfaces over the same backend state.
+2. **One KRISTOU product.** Normal Browser and Telegram WebView are delivery/authentication contexts of the same KRISTOU product. They must use one canonical React/TypeScript product frontend, one route authority, one feature implementation per capability, one shared frontend state/API integration path, one canonical backend API/application/domain behavior, and one canonical durable state. Telegram-specific code may adapt host/runtime mechanics only; it must not create a second product frontend, router, shell, feature tree, API client/state model, or business behavior.
 3. **One canonical User.** Web and Telegram identities attach to the same canonical user; there are no separate Web/Telegram product accounts.
 4. **Server-side authorization.** UI visibility never grants authority.
 5. **RBAC + resource scope.** Protected actions require role/capability plus the correct child/class/resource scope.
