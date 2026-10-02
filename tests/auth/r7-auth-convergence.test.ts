@@ -53,7 +53,9 @@ class FakeIdentityRepository implements IdentityRepository {
   telegramUsers = new Map<string, string>();
   createdTelegramUsers = 0;
 
-  async findWebCredential(loginUsername: string): Promise<StoredWebCredential | null> {
+  async findWebCredential(
+    loginUsername: string,
+  ): Promise<StoredWebCredential | null> {
     return this.credential?.loginUsername === loginUsername ? this.credential : null;
   }
 
@@ -101,138 +103,153 @@ test("password hashes use Argon2id and reject the wrong password", async () => {
   assert.equal(await verifyPassword(hash, "wrong password"), false);
 });
 
-test("session helpers expose an opaque token while persisting only its peppered hash", () => {
-  const issued = generateSessionToken();
-  const storedHash = hashSessionToken(issued, SESSION_PEPPER);
+test(
+  "session helpers expose an opaque token while persisting only its peppered hash",
+  () => {
+    const issued = generateSessionToken();
+    const storedHash = hashSessionToken(issued, SESSION_PEPPER);
 
-  assert.notEqual(storedHash, issued);
-  assert.equal(storedHash, hashSessionToken(issued, SESSION_PEPPER));
-  assert.match(storedHash, /^[a-f0-9]{64}$/);
-});
+    assert.notEqual(storedHash, issued);
+    assert.equal(storedHash, hashSessionToken(issued, SESSION_PEPPER));
+    assert.match(storedHash, /^[a-f0-9]{64}$/);
+  },
+);
 
-test("Telegram initData validates the official HMAC contract and fails closed when tampered or stale", () => {
-  const nowSeconds = Math.floor(NOW.getTime() / 1000);
-  const raw = signTelegramInitData(
-    {
-      id: 803441921,
-      username: "linked_parent",
-      first_name: "Linked",
-      last_name: "Parent",
-      language_code: "fr",
-    },
-    nowSeconds,
-  );
+test(
+  "Telegram initData validates the official HMAC contract and fails closed when tampered or stale",
+  () => {
+    const nowSeconds = Math.floor(NOW.getTime() / 1000);
+    const raw = signTelegramInitData(
+      {
+        id: 803441921,
+        username: "linked_parent",
+        first_name: "Linked",
+        last_name: "Parent",
+        language_code: "fr",
+      },
+      nowSeconds,
+    );
 
-  const validated = validateTelegramInitData(raw, BOT_TOKEN, {
-    now: NOW,
-    maxAgeSeconds: 900,
-  });
+    const validated = validateTelegramInitData(raw, BOT_TOKEN, {
+      now: NOW,
+      maxAgeSeconds: 900,
+    });
 
-  assert.equal(validated.user.telegramUserId, BigInt("803441921"));
-  assert.equal(validated.user.telegramUsername, "linked_parent");
+    assert.equal(validated.user.telegramUserId, BigInt("803441921"));
+    assert.equal(validated.user.telegramUsername, "linked_parent");
 
-  const tampered = raw.replace("linked_parent", "attacker");
-  assert.throws(
-    () =>
-      validateTelegramInitData(tampered, BOT_TOKEN, {
-        now: NOW,
-        maxAgeSeconds: 900,
-      }),
-    { name: "TelegramInitDataError" },
-  );
+    const tampered = raw.replace("linked_parent", "attacker");
+    assert.throws(
+      () =>
+        validateTelegramInitData(tampered, BOT_TOKEN, {
+          now: NOW,
+          maxAgeSeconds: 900,
+        }),
+      { name: "TelegramInitDataError" },
+    );
 
-  const stale = signTelegramInitData({ id: 803441921 }, nowSeconds - 901);
-  assert.throws(
-    () =>
-      validateTelegramInitData(stale, BOT_TOKEN, {
-        now: NOW,
-        maxAgeSeconds: 900,
-      }),
-    { name: "TelegramInitDataError" },
-  );
-});
+    const stale = signTelegramInitData({ id: 803441921 }, nowSeconds - 901);
+    assert.throws(
+      () =>
+        validateTelegramInitData(stale, BOT_TOKEN, {
+          now: NOW,
+          maxAgeSeconds: 900,
+        }),
+      { name: "TelegramInitDataError" },
+    );
+  },
+);
 
-test("Web credential login issues a hashed server session that resolves to the canonical User", async () => {
-  const repository = new FakeIdentityRepository();
-  repository.credential = {
-    userId: "user-canonical-1",
-    loginUsername: "parent.ahmed",
-    passwordHash: await hashPassword("school-password"),
-    lockedUntil: null,
-  };
+test(
+  "Web credential login issues a hashed server session that resolves to the canonical User",
+  async () => {
+    const repository = new FakeIdentityRepository();
+    repository.credential = {
+      userId: "user-canonical-1",
+      loginUsername: "parent.ahmed",
+      passwordHash: await hashPassword("school-password"),
+      lockedUntil: null,
+    };
 
-  const service = new IdentityAuthService(repository, {
-    sessionTokenPepper: SESSION_PEPPER,
-    sessionTtlSeconds: 3600,
-    telegramBotToken: BOT_TOKEN,
-    telegramInitDataMaxAgeSeconds: 900,
-    now: () => NOW,
-  });
+    const service = new IdentityAuthService(repository, {
+      sessionTokenPepper: SESSION_PEPPER,
+      sessionTtlSeconds: 3600,
+      telegramBotToken: BOT_TOKEN,
+      telegramInitDataMaxAgeSeconds: 900,
+      now: () => NOW,
+    });
 
-  const login = await service.loginWeb(" PARENT.AHMED ", "school-password");
+    const login = await service.loginWeb(" PARENT.AHMED ", "school-password");
 
-  assert.equal(login.principal.userId, "user-canonical-1");
-  assert.equal(repository.sessions.size, 1);
-  assert.equal(repository.sessions.has(login.sessionToken), false);
+    assert.equal(login.principal.userId, "user-canonical-1");
+    assert.equal(repository.sessions.size, 1);
+    assert.equal(repository.sessions.has(login.sessionToken), false);
 
-  const principal = await service.authenticateWebSession(login.sessionToken);
-  assert.deepEqual(principal, { userId: "user-canonical-1" });
-});
+    const principal = await service.authenticateWebSession(login.sessionToken);
+    assert.deepEqual(principal, { userId: "user-canonical-1" });
+  },
+);
 
-test("Telegram authentication resolves to the same canonical principal and provisions only when identity is new", async () => {
-  const repository = new FakeIdentityRepository();
-  repository.telegramUsers.set("803441921", "user-canonical-1");
+test(
+  "Telegram authentication resolves to the same canonical principal and provisions only when identity is new",
+  async () => {
+    const repository = new FakeIdentityRepository();
+    repository.telegramUsers.set("803441921", "user-canonical-1");
 
-  const service = new IdentityAuthService(repository, {
-    sessionTokenPepper: SESSION_PEPPER,
-    sessionTtlSeconds: 3600,
-    telegramBotToken: BOT_TOKEN,
-    telegramInitDataMaxAgeSeconds: 900,
-    now: () => NOW,
-  });
-  const nowSeconds = Math.floor(NOW.getTime() / 1000);
+    const service = new IdentityAuthService(repository, {
+      sessionTokenPepper: SESSION_PEPPER,
+      sessionTtlSeconds: 3600,
+      telegramBotToken: BOT_TOKEN,
+      telegramInitDataMaxAgeSeconds: 900,
+      now: () => NOW,
+    });
+    const nowSeconds = Math.floor(NOW.getTime() / 1000);
 
-  const existing = await service.authenticateTelegram(
-    signTelegramInitData({ id: 803441921, username: "linked_parent" }, nowSeconds),
-  );
-  assert.deepEqual(existing, { userId: "user-canonical-1" });
-  assert.equal(repository.createdTelegramUsers, 0);
+    const existing = await service.authenticateTelegram(
+      signTelegramInitData({ id: 803441921, username: "linked_parent" }, nowSeconds),
+    );
+    assert.deepEqual(existing, { userId: "user-canonical-1" });
+    assert.equal(repository.createdTelegramUsers, 0);
 
-  const created = await service.authenticateTelegram(
-    signTelegramInitData({ id: 803441922, username: "new_parent" }, nowSeconds),
-  );
-  assert.deepEqual(created, { userId: "telegram-user-1" });
-  assert.equal(repository.createdTelegramUsers, 1);
-});
+    const created = await service.authenticateTelegram(
+      signTelegramInitData({ id: 803441922, username: "new_parent" }, nowSeconds),
+    );
+    assert.deepEqual(created, { userId: "telegram-user-1" });
+    assert.equal(repository.createdTelegramUsers, 1);
+  },
+);
 
-test("conflicting independently valid Web and Telegram transports fail closed", async () => {
-  const repository = new FakeIdentityRepository();
-  const rawSession = "session-token-for-conflict";
-  repository.sessions.set(hashSessionToken(rawSession, SESSION_PEPPER), {
-    userId: "web-user",
-    tokenHash: hashSessionToken(rawSession, SESSION_PEPPER),
-    expiresAt: new Date(NOW.getTime() + 60_000),
-    revokedAt: null,
-  });
-  repository.telegramUsers.set("803441921", "telegram-user");
+test(
+  "conflicting independently valid Web and Telegram transports fail closed",
+  async () => {
+    const repository = new FakeIdentityRepository();
+    const rawSession = "session-token-for-conflict";
+    repository.sessions.set(hashSessionToken(rawSession, SESSION_PEPPER), {
+      userId: "web-user",
+      tokenHash: hashSessionToken(rawSession, SESSION_PEPPER),
+      expiresAt: new Date(NOW.getTime() + 60_000),
+      revokedAt: null,
+    });
+    repository.telegramUsers.set("803441921", "telegram-user");
 
-  const service = new IdentityAuthService(repository, {
-    sessionTokenPepper: SESSION_PEPPER,
-    sessionTtlSeconds: 3600,
-    telegramBotToken: BOT_TOKEN,
-    telegramInitDataMaxAgeSeconds: 900,
-    now: () => NOW,
-  });
+    const service = new IdentityAuthService(repository, {
+      sessionTokenPepper: SESSION_PEPPER,
+      sessionTtlSeconds: 3600,
+      telegramBotToken: BOT_TOKEN,
+      telegramInitDataMaxAgeSeconds: 900,
+      now: () => NOW,
+    });
 
-  await assert.rejects(
-    () =>
-      service.resolvePrincipal({
-        sessionToken: rawSession,
-        telegramInitData: signTelegramInitData(
-          { id: 803441921 },
-          Math.floor(NOW.getTime() / 1000),
-        ),
-      }),
-    (error: unknown) => error instanceof AuthError && error.code === "AUTH_CONFLICT",
-  );
-});
+    await assert.rejects(
+      () =>
+        service.resolvePrincipal({
+          sessionToken: rawSession,
+          telegramInitData: signTelegramInitData(
+            { id: 803441921 },
+            Math.floor(NOW.getTime() / 1000),
+          ),
+        }),
+      (error: unknown) => error instanceof AuthError && error.code === "AUTH_CONFLICT",
+    );
+  },
+);
