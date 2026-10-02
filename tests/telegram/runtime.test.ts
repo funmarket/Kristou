@@ -5,7 +5,7 @@ import {
   type CssVariableTarget,
   type TelegramEvent,
   type TelegramWebAppBridge,
-} from "../../apps/telegram/src/runtime.ts";
+} from "../../apps/web/src/telegram/runtime.ts";
 
 class FakeStyle {
   readonly values = new Map<string, string>();
