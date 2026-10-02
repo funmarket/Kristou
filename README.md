@@ -6,25 +6,24 @@ This repository is intentionally clean. The HoomaUltimate repository is a read-o
 
 ## Repository topology
 
-Planned foundation:
+Current Phase 0 foundation:
 
 ```text
 apps/
-  api/
-  web/
-  telegram/
-  worker/
+  api/        # canonical backend transport/composition runtime
+  web/        # canonical React product entry/router/shell for Browser + Telegram WebView
+  telegram/   # compatibility/deployment facade only; must not own a product source tree
+  worker/     # asynchronous execution only
+
 packages/
-  auth/
   config/
   contracts/
   database/
   domain/
-  frontend/
-  media-processing/
-  storage/
+  frontend/   # shared KRISTOU feature UI/state/API integration
   testing/
-  ui/
+  ui/         # domain-neutral presentation/tokens/assets
+
 docs/
 AGENTS.md
 structure.md
@@ -33,7 +32,9 @@ progress.md
 .env.example
 ```
 
-The exact code topology may be refined only through the architecture authorities in this repository.
+Future packages are added only when an approved implementation slice requires them. The exact topology may be refined only through the architecture authorities in this repository.
+
+KRISTOU has one product frontend. Browser and Telegram WebView are delivery/authentication contexts of that same frontend. `apps/web` owns the canonical React application entry, route authority, and product shell. Telegram-specific code is limited to host/runtime integration and must not create a second router, shell, feature tree, API client/state model, or durable product authority.
 
 ## Mandatory reading before implementation
 
@@ -75,7 +76,8 @@ Do not create another file that competes with one of these authorities.
 
 The approved product baseline includes:
 
-- one canonical user shared by Web and Telegram;
+- one canonical product frontend shared by Browser and Telegram WebView;
+- one canonical user shared by Web and Telegram authentication transports;
 - server-side RBAC + resource-scoped authorization;
 - public/general, parent, student, teacher, manager/associate, and App Admin access boundaries;
 - class communities;
@@ -103,4 +105,4 @@ npm run lint
 npm run deploy:preflight
 ```
 
-The API/Web/Telegram/Worker workspaces are added in later Phase 0 tasks. Until those workspaces exist, full build/typecheck/runtime commands are intentionally not claimed as verified.
+The Phase 0 API, Web, Telegram-facade, Worker, and shared-package workspaces now exist in source. Their presence is not runtime proof. Build, test, database, browser, deployment, and live behavior must each be verified at the evidence tier required by the claim.
