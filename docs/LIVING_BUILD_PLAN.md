@@ -178,9 +178,9 @@ A user opening one product area should not trigger unrelated domain queries, loc
 
 Before any task that touches frontend entrypoints, routing, authentication transport, Telegram runtime, API transport wiring, build commands, or deployment entry behavior, verify all of the following from current source/runtime evidence:
 
-1. `apps/web` remains the target canonical KRISTOU product frontend owner;
+1. `apps/web` remains the canonical KRISTOU product frontend owner;
 2. Browser and Telegram WebView are intended to enter the same canonical React/TypeScript product;
-3. current `apps/telegram/src` ownership is treated as migration debt, not permission to add a second product implementation;
+3. no independent `apps/telegram` product workspace/source owner remains after R4; any future compatibility package must be facade-only;
 4. no second Telegram router/provider/shell, duplicate feature UI, duplicate product state, duplicate domain API client, or duplicate asset authority is introduced;
 5. Telegram-specific behavior is limited to host/runtime mechanics and authentication transport adaptation;
 6. both delivery contexts converge on the same API/application/domain authority and canonical User;
@@ -506,9 +506,10 @@ Before consequential work:
 - use Railway as the current Web/API deployment authority unless the owner explicitly changes the hosting decision;
 - treat deployment branches as deployment evidence, not as a substitute for integration-branch authority.
 
-Known recovery debt remains:
+Known frontend recovery debt remains:
 
-- `apps/telegram/src` still owns Telegram runtime mechanics instead of the target canonical Web runtime boundary;
-- architecture checks do not yet forbid reintroducing a second Telegram product source owner.
+- R5 must close the explicit canonical build-graph packet without reintroducing a Telegram product workspace;
+- R6-R8 must still wire and prove Browser/Telegram runtime-context and authentication parity;
+- architecture checks now reject any reintroduced `apps/telegram/src` product source owner.
 
 Use `progress.md` for exact implementation/deployment evidence and re-verify mutable branch/runtime facts before each consequential task.

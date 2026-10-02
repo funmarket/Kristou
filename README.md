@@ -12,7 +12,6 @@ Verified deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1
 apps/
   api/        # backend HTTP runtime
   web/        # canonical KRISTOU React application entry and current Railway Web build
-  telegram/   # current Telegram runtime/source package pending one-product ownership recovery
   worker/     # async runtime foundation
 packages/
   config/
@@ -30,7 +29,7 @@ tests/
 
 The source tree above is current implementation evidence, not permission to preserve accidental ownership forever. KRISTOU's target architecture is one product frontend: normal Browser and Telegram WebView use the same canonical React/TypeScript product, route authority, feature implementation, API/application/domain behavior, and canonical User. Telegram-specific code may adapt host/runtime mechanics only.
 
-Current known architecture debt: `apps/telegram/src` still owns Telegram runtime source. Recovery work must first move those mechanics into the canonical Web runtime boundary and prove them before removing the superseded owner. Do not create new Telegram product pages, router, shell, state, API client, or business behavior there.
+R4 removed the superseded `apps/telegram` workspace after repository and Railway inspection found no current consumer requiring that standalone package identity. Telegram host/runtime mechanics remain canonically owned under `apps/web/src/telegram/runtime.ts`; any future compatibility package must be facade-only and must not create a second product owner.
 
 ## Current deployment truth
 

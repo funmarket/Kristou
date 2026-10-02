@@ -130,7 +130,7 @@ Target ownership:
 - Telegram-specific code is limited to host/runtime mechanics such as validated `initData` transport, lifecycle, viewport/safe-area, BackButton, haptics/native host integration, and compatible entry/deep-link behavior;
 - no second Telegram router, provider, shell, feature tree, product state store, domain API client, asset authority, or business behavior is allowed.
 
-Current-state caveat: `apps/telegram/src` still exists in the deployed source lineage and currently owns Telegram runtime mechanics. Treat that as recovery debt, not as target architecture. When moving those mechanics, use move -> prove -> remove. Do not copy them into a new owner and leave both implementations active.
+Current state after R4: Telegram host/runtime mechanics are owned under `apps/web/src/telegram/runtime.ts`, and no independent `apps/telegram` product workspace/source owner remains. If a future compatibility package is explicitly required, it must be facade-only and must not regain router, shell, feature, state, API, asset, runtime, or business ownership.
 
 ### No monolithic authorities
 
