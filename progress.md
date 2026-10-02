@@ -261,7 +261,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - PostgreSQL runtime proof remains blocked in this environment; do not call Task 6B runtime-GREEN until Prisma generation/validation, migration application, and the focused database integration suite pass against disposable PostgreSQL.
 - Status correction: **MERGED** into `phase-0-foundation` through PR #9 at merge commit `0ac85b23c6e0f88bae8293496c890ca681c4915f`. This proves source/test-contract integration only; the PostgreSQL runtime integration gate remains unproven.
 
-
 ### Recovery baseline — build graph, Railway candidate, and one-product topology
 
 - Recovery inspection established that `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc` is the source used by the successful Railway Web/API candidate deployments.
