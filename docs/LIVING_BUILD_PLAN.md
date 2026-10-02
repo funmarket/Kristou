@@ -174,6 +174,24 @@ A user opening one product area should not trigger unrelated domain queries, loc
 
 ---
 
+## 3A. One-product topology gate
+
+Before any task that touches frontend entrypoints, routing, authentication transport, Telegram runtime, API transport wiring, or deployment entry behavior, verify all of the following from current source:
+
+1. `apps/web` remains the canonical KRISTOU product frontend owner;
+2. Browser and Telegram WebView enter the same canonical React/TypeScript product;
+3. no `apps/telegram/src` product tree, second router/provider/shell, duplicate feature UI, duplicate product state, or duplicate domain API client exists;
+4. Telegram-specific behavior is limited to host/runtime mechanics and transport adaptation;
+5. both delivery contexts converge on the same API/application/domain authority and canonical User;
+6. replacing platform ownership follows move -> prove -> remove, never copy -> hide -> keep both;
+7. architecture checks cover the boundary being changed.
+
+If any item is unknown or contradicted, stop before mutation.
+
+A task may not use "same backend" as proof of one-product architecture while maintaining separate frontend ownership.
+
+---
+
 ## 4. Parallel work rules
 
 Multiple agents may work in parallel; interference is not allowed.
