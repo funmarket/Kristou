@@ -135,7 +135,10 @@ test("logout revokes the server session and clears the browser cookie", async ()
     });
     assert.equal(logout.status, 204);
     assert.match(logout.headers.get("set-cookie") ?? "", /Max-Age=0/i);
-    assert.equal([...repository.sessions.values()].every((session) => session.revokedAt), true);
+    assert.equal(
+      [...repository.sessions.values()].every((session) => session.revokedAt),
+      true,
+    );
 
     const me = await fetch(`${server.baseUrl}/auth/me`, {
       headers: { cookie },
