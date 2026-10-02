@@ -51,8 +51,7 @@ test("allows only the exact temporary Telegram migration-debt source files", asy
 test("rejects a new Telegram product source owner", async () => {
   await withFixture(
     {
-      "apps/telegram/src/TelegramPage.tsx":
-        "export function TelegramPage() { return null; }\n",
+      "apps/telegram/src/TelegramPage.tsx": "export function TelegramPage() { return null; }\n",
     },
     async (root) => {
       const result = runChecker(root);

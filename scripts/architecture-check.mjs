@@ -62,10 +62,7 @@ for (const file of await walk(root)) {
   const source = await readFile(file, "utf8");
   const imports = importSpecifiers(source);
 
-  if (
-    normalized.startsWith("apps/telegram/src/") &&
-    !allowedTelegramSourceFiles.has(normalized)
-  ) {
+  if (normalized.startsWith("apps/telegram/src/") && !allowedTelegramSourceFiles.has(normalized)) {
     violations.push(
       `${normalized}: Telegram product source must live in the canonical Web frontend; only temporary migration-debt files are allowed under apps/telegram/src`,
     );
