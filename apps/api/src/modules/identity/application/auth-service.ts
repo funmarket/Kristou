@@ -42,11 +42,7 @@ export interface IdentityRepository {
   createTelegramUser(profile: TelegramInitDataUser, authenticatedAt: Date): Promise<string>;
 }
 
-export type AuthErrorCode =
-  | "AUTH_REQUIRED"
-  | "AUTH_INVALID"
-  | "AUTH_EXPIRED"
-  | "AUTH_CONFLICT";
+export type AuthErrorCode = "AUTH_REQUIRED" | "AUTH_INVALID" | "AUTH_EXPIRED" | "AUTH_CONFLICT";
 
 export class AuthError extends Error {
   constructor(readonly code: AuthErrorCode) {

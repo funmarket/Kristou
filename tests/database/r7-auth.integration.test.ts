@@ -36,10 +36,7 @@ test("concurrent Telegram provisioning creates exactly one canonical User", asyn
   ]);
 
   assert.equal(first, second);
-  assert.equal(
-    await db.telegramIdentity.count({ where: { telegramUserId } }),
-    1,
-  );
+  assert.equal(await db.telegramIdentity.count({ where: { telegramUserId } }), 1);
   assert.equal(await db.user.count(), beforeUsers + 1);
 
   await db.user.delete({ where: { id: first } });

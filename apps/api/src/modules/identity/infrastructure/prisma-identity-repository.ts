@@ -86,10 +86,7 @@ export class PrismaIdentityRepository implements IdentityRepository {
     });
   }
 
-  async createTelegramUser(
-    profile: TelegramInitDataUser,
-    authenticatedAt: Date,
-  ): Promise<string> {
+  async createTelegramUser(profile: TelegramInitDataUser, authenticatedAt: Date): Promise<string> {
     try {
       return await this.db.$transaction(async (tx) => {
         const existing = await tx.telegramIdentity.findUnique({
@@ -121,11 +118,7 @@ export class PrismaIdentityRepository implements IdentityRepository {
         select: { userId: true },
       });
       if (!existing) throw error;
-      await this.touchTelegramIdentity(
-        profile.telegramUserId,
-        profile,
-        authenticatedAt,
-      );
+      await this.touchTelegramIdentity(profile.telegramUserId, profile, authenticatedAt);
       return existing.userId;
     }
   }

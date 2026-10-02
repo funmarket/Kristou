@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  generateSessionToken,
-  hashSessionToken,
-} from "../../packages/auth/src/index.js";
+import { generateSessionToken, hashSessionToken } from "../../packages/auth/src/index.js";
 
 test("session tokens are opaque and only their keyed hash is persisted", () => {
   const first = generateSessionToken();

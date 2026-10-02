@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  TelegramInitDataError,
-  validateTelegramInitData,
-} from "../../packages/auth/src/index.js";
+import { TelegramInitDataError, validateTelegramInitData } from "../../packages/auth/src/index.js";
 import { signTelegramInitData, testConfig } from "./r7-fixtures.js";
 
 function signed(authDate: number) {

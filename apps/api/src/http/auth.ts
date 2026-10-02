@@ -41,10 +41,7 @@ function sendAuthError(response: Response, error: unknown): void {
   response.status(401).json({ error: "AUTH_INVALID" });
 }
 
-export function createAuthRouter(
-  repository: IdentityRepository,
-  config: AuthApiConfig,
-): Router {
+export function createAuthRouter(repository: IdentityRepository, config: AuthApiConfig): Router {
   const router = Router();
   const service = new IdentityAuthService(repository, {
     sessionTokenPepper: config.sessionTokenPepper,

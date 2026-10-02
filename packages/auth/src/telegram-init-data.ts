@@ -63,10 +63,7 @@ export function validateTelegramInitData(
   const secretKey = createHmac("sha256", "WebAppData").update(botToken).digest();
   const expectedHash = createHmac("sha256", secretKey).update(dataCheckString).digest();
   const suppliedHash = Buffer.from(hash, "hex");
-  if (
-    suppliedHash.length !== expectedHash.length ||
-    !timingSafeEqual(suppliedHash, expectedHash)
-  ) {
+  if (suppliedHash.length !== expectedHash.length || !timingSafeEqual(suppliedHash, expectedHash)) {
     fail("Telegram initData signature is invalid");
   }
 
