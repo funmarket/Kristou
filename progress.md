@@ -264,4 +264,13 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - No Prisma schema or migration change was required by the source contract.
 - TypeScript syntax stripping/check for the expanded foundation integration test: **PASS**.
 - PostgreSQL runtime proof remains blocked in this environment; do not call Task 6B runtime-GREEN until Prisma generation/validation, migration application, and the focused database integration suite pass against disposable PostgreSQL.
-- Status: **SOURCE/TEST-CONTRACT CANDIDATE ONLY — NOT MERGED**.
+- Status: **MERGED** into `phase-0-foundation` by PR #9 at merge commit `0ac85b23c6e0f88bae8293496c890ca681c4915f`.
+- This merge proves source/test-contract integration only. PostgreSQL/Prisma runtime GREEN remains unproven until the required disposable-PostgreSQL verification passes.
+
+
+### R1 — One-product governance recovery baseline
+
+- Recovery baseline inspected from `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f` with zero open PRs.
+- Verified current source still contains `apps/telegram/src/runtime.ts`, while `requirements.md` already requires one KRISTOU product. This is the runtime-topology drift being recovered.
+- R1 is documentation/governance reconciliation only. It does **not** claim that Telegram source ownership has already been migrated or removed.
+- Source migration, architecture-check hardening, tests, PR/CI/merge, and runtime parity proof belong to later recovery tasks and must not be reported complete from R1 documentation changes alone.
