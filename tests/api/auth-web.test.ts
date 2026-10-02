@@ -18,41 +18,41 @@ function appWith(repository: MemoryIdentityRepository) {
 }
 
 test("valid Web credentials issue an opaque server session that resolves to the canonical User", async () => {
-    const repository = new MemoryIdentityRepository();
-    repository.addCredential("parent.ahmed", "user-web-1");
-    const server = await startTestServer(appWith(repository));
+  const repository = new MemoryIdentityRepository();
+  repository.addCredential("parent.ahmed", "user-web-1");
+  const server = await startTestServer(appWith(repository));
 
-    try {
-      const login = await fetch(`${server.baseUrl}/auth/login`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          loginUsername: " Parent.Ahmed ",
-          password: correctPassword,
-        }),
-      });
+  try {
+    const login = await fetch(`${server.baseUrl}/auth/login`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        loginUsername: " Parent.Ahmed ",
+        password: correctPassword,
+      }),
+    });
 
-      assert.equal(login.status, 200);
-      assert.deepEqual(await login.json(), { principal: { userId: "user-web-1" } });
+    assert.equal(login.status, 200);
+    assert.deepEqual(await login.json(), { principal: { userId: "user-web-1" } });
 
-      const setCookie = login.headers.get("set-cookie");
-      assert.ok(setCookie);
-      assert.match(setCookie, /HttpOnly/i);
-      assert.match(setCookie, /SameSite=Lax/i);
-      assert.match(setCookie, /Path=\//i);
+    const setCookie = login.headers.get("set-cookie");
+    assert.ok(setCookie);
+    assert.match(setCookie, /HttpOnly/i);
+    assert.match(setCookie, /SameSite=Lax/i);
+    assert.match(setCookie, /Path=\//i);
 
-      const cookie = sessionCookieFrom(login);
-      const rawToken = cookie.slice(cookie.indexOf("=") + 1);
-      assert.ok(rawToken.length >= 32);
-      assert.equal(repository.sessions.size, 1);
-      const stored = [...repository.sessions.values()][0];
-      assert.notEqual(stored.tokenHash, rawToken);
+    const cookie = sessionCookieFrom(login);
+    const rawToken = cookie.slice(cookie.indexOf("=") + 1);
+    assert.ok(rawToken.length >= 32);
+    assert.equal(repository.sessions.size, 1);
+    const stored = [...repository.sessions.values()][0];
+    assert.notEqual(stored.tokenHash, rawToken);
 
-      const me = await fetch(`${server.baseUrl}/auth/me`, {
-        headers: { cookie },
-      });
-      assert.equal(me.status, 200);
-      assert.deepEqual(await me.json(), { principal: { userId: "user-web-1" } });
+    const me = await fetch(`${server.baseUrl}/auth/me`, {
+      headers: { cookie },
+    });
+    assert.equal(me.status, 200);
+    assert.deepEqual(await me.json(), { principal: { userId: "user-web-1" } });
   } finally {
     await server.close();
   }
