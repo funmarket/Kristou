@@ -38,7 +38,7 @@ The product is not a generic social network and must not become a catch-all scho
 The following are locked:
 
 1. **Mobile first.** Phone usability is the primary interaction baseline.
-2. **One KRISTOU product.** Web and Telegram are delivery/authentication surfaces over the same backend state.
+2. **One KRISTOU product.** Normal Browser and Telegram WebView are delivery/authentication contexts of the same KRISTOU product. They must use one canonical React/TypeScript product frontend, one route authority, one feature implementation per capability, one shared frontend state/API integration path, one canonical backend API/application/domain behavior, and one canonical durable state. Telegram-specific code may adapt host/runtime mechanics only; it must not create a second product frontend, router, shell, feature tree, API client/state model, asset authority, or business behavior.
 3. **One canonical User.** Web and Telegram identities attach to the same canonical user; there are no separate Web/Telegram product accounts.
 4. **Server-side authorization.** UI visibility never grants authority.
 5. **RBAC + resource scope.** Protected actions require role/capability plus the correct child/class/resource scope.
@@ -1070,24 +1070,34 @@ The app must remain functional without AI.
 
 # 43. Infrastructure direction
 
-Planned direction:
+Current verified candidate deployment:
 
 ## Railway
 
-- API
-- Worker
-- PostgreSQL
-- Redis/Valkey
+Railway is the current hosting/runtime authority for the KRISTOU candidate:
+
+- Web frontend (`web-candidate`);
+- API (`api-candidate`);
+- PostgreSQL;
+- Redis/Valkey.
+
+The verified Web deployment is sourced from the repository's `deploy-candidate` lineage and builds with `npm run build:web`.
 
 ## Cloudflare
 
-- frontend/edge where selected;
-- optional Workers / Workers AI / AI Gateway;
-- optional object storage/R2 depending on final storage decision.
+Cloudflare is not the current frontend hosting authority.
+
+It is reserved for later AI/edge capabilities when that phase is explicitly implemented, including where approved:
+
+- Workers / Workers AI;
+- AI Gateway;
+- optional R2/object storage if separately selected.
+
+Introducing Cloudflare must not fork the KRISTOU product frontend or create a second application/runtime authority.
 
 Local, staging, and production must use isolated configuration/secrets/data.
 
-This section is target direction, not current deployment status.
+Provider/runtime state is mutable; fresh deployment evidence overrides stale documentation about what is currently live.
 
 ---
 
