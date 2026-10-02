@@ -118,6 +118,21 @@ Mandatory:
 - object storage owns media bytes;
 - Web and Telegram are delivery/authentication surfaces over the same canonical product state.
 
+### One product frontend — hard lock
+
+KRISTOU has one canonical React/TypeScript product frontend. Browser and Telegram WebView are delivery/authentication contexts of that same frontend.
+
+Permanent rules:
+
+- `apps/web` owns the canonical React entry, route authority, and product shell;
+- shared product feature UI/state/API integration belongs in `packages/frontend` by owning feature/domain;
+- `packages/ui` remains domain-neutral presentation/tokens/assets;
+- `apps/telegram`, if retained for deployment compatibility, is facade-only and must not own a product source tree;
+- do not create `apps/telegram/src`, a second Telegram router/provider/shell, duplicate feature pages, duplicate API clients/state, or Telegram-only business behavior;
+- Telegram-specific code is limited to host mechanics such as validated `initData` transport, lifecycle, viewport/safe-area, BackButton, haptics/native host integration, and compatible entry/deep-link behavior;
+- both delivery contexts must call the same canonical API/application/domain authorities and resolve to the same canonical `User`;
+- if replacing a platform owner, move the mechanics to the canonical owner, prove the replacement, then remove the superseded owner. Do not hide or keep duplicate ownership "for safety."
+
 ### No monolithic authorities
 
 Do **not** create or expand a file, service, repository, contract, API client, store, controller, script, or module that owns unrelated domains.
