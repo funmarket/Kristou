@@ -117,7 +117,7 @@ Business policy must not live directly in HTTP handlers.
 
 ### `apps/web`
 
-Target owner of the canonical KRISTOU product frontend for both normal Browser and Telegram WebView delivery contexts:
+Current owner of the canonical KRISTOU product frontend for both normal Browser and Telegram WebView delivery contexts:
 
 - canonical React application entry;
 - canonical route authority;
@@ -131,7 +131,7 @@ It consumes shared feature UI and contracts where appropriate but does not own b
 
 ### `apps/telegram`
 
-Current source state: `apps/telegram/src` exists and owns Telegram runtime mechanics. This is recovery debt, not the target product boundary.
+Current source state after R3: Telegram runtime mechanics are owned under `apps/web/src/telegram/runtime.ts`. `apps/telegram/src/index.ts` remains as recovery debt for the separate R4 facade/cleanup decision and must not regain runtime ownership.
 
 Target state: `apps/telegram`, if retained for compatibility/deployment naming, is facade-only and delegates to the canonical `apps/web` product frontend. It must not own:
 
@@ -381,7 +381,7 @@ validated initData transport --------> same API/application/domain state
                                        -> canonical User
 ```
 
-Current source has not completed this topology because Telegram runtime mechanics still live under `apps/telegram/src`. Recovery work must converge that ownership before later feature expansion.
+Telegram runtime ownership now lives under the canonical `apps/web` boundary. Remaining recovery work must reduce the superseded `apps/telegram` source ownership in R4 and then prove canonical runtime-context/auth parity in the later recovery packets before feature expansion.
 
 No Telegram-specific copies of:
 
@@ -448,7 +448,7 @@ PostgreSQL stores canonical descriptors/ownership references.
 - `apps/web` owns the canonical entry, route authority, shell, and runtime composition;
 - shared product feature UI/state/API integration belongs in `packages/frontend` under the owning feature/domain;
 - `packages/ui` owns domain-neutral components, design tokens, themes, accessibility primitives, and governed shared assets;
-- `apps/telegram`, if retained, is facade-only in the target architecture; current source ownership there must be migrated rather than expanded;
+- `apps/telegram`, if retained, is facade-only in the target architecture; remaining source there must be reduced in R4 rather than expanded;
 - Telegram host-specific mechanics belong behind adapters consumed by the canonical Web application;
 - one feature must not require loading unrelated domains;
 - server state and authorization must not be replaced by frontend guesses;

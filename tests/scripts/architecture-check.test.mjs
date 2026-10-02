@@ -17,10 +17,6 @@ async function withFixture(extraFiles, callback) {
     await mkdir(path.join(root, "apps/telegram/src"), { recursive: true });
     await writeFile(path.join(root, "scripts/architecture-check.mjs"), checkerSource);
     await writeFile(path.join(root, "apps/telegram/src/index.ts"), "export {};\n");
-    await writeFile(
-      path.join(root, "apps/telegram/src/runtime.ts"),
-      "export const runtime = true;\n",
-    );
 
     for (const [relative, content] of Object.entries(extraFiles)) {
       const target = path.join(root, relative);
@@ -51,7 +47,7 @@ test("allows only the exact temporary Telegram migration-debt source files", asy
 test("rejects a new Telegram product source owner", async () => {
   await withFixture(
     {
-      "apps/telegram/src/TelegramPage.tsx": "export function TelegramPage() { return null; }\n",
+      "apps/telegram/src/runtime.ts": "export const runtime = true;\n",
     },
     async (root) => {
       const result = runChecker(root);
@@ -62,7 +58,7 @@ test("rejects a new Telegram product source owner", async () => {
       );
       assert.match(
         result.stderr,
-        /apps\/telegram\/src\/TelegramPage\.tsx: Telegram product source must live in the canonical Web frontend/,
+        /apps\/telegram\/src\/runtime\.ts: Telegram product source must live in the canonical Web frontend/,
       );
     },
   );
