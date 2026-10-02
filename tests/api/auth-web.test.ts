@@ -10,18 +10,14 @@ import {
 } from "../auth/r7-fixtures.js";
 
 function appWith(repository: MemoryIdentityRepository) {
-  return createApiApp(
-    {
-      config: testConfig,
-      readiness: { isReady: () => true },
-      identityRepository: repository,
-    } as unknown as Parameters<typeof createApiApp>[0],
-  );
+  return createApiApp({
+    config: testConfig,
+    readiness: { isReady: () => true },
+    identityRepository: repository,
+  } as unknown as Parameters<typeof createApiApp>[0]);
 }
 
-test(
-  "valid Web credentials issue an opaque server session that resolves to the canonical User",
-  async () => {
+test("valid Web credentials issue an opaque server session that resolves to the canonical User", async () => {
     const repository = new MemoryIdentityRepository();
     repository.addCredential("parent.ahmed", "user-web-1");
     const server = await startTestServer(appWith(repository));
@@ -57,11 +53,10 @@ test(
       });
       assert.equal(me.status, 200);
       assert.deepEqual(await me.json(), { principal: { userId: "user-web-1" } });
-    } finally {
-      await server.close();
-    }
-  },
-);
+  } finally {
+    await server.close();
+  }
+});
 
 test("invalid credentials, expired sessions, and revoked sessions fail closed", async () => {
   const repository = new MemoryIdentityRepository();

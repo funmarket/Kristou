@@ -11,13 +11,11 @@ import {
 } from "../auth/r7-fixtures.js";
 
 function appWith(repository: MemoryIdentityRepository) {
-  return createApiApp(
-    {
-      config: testConfig,
-      readiness: { isReady: () => true },
-      identityRepository: repository,
-    } as unknown as Parameters<typeof createApiApp>[0],
-  );
+  return createApiApp({
+    config: testConfig,
+    readiness: { isReady: () => true },
+    identityRepository: repository,
+  } as unknown as Parameters<typeof createApiApp>[0]);
 }
 
 function currentAuthDate(): number {
@@ -123,9 +121,7 @@ test("Telegram-only authentication can provision one canonical User", async () =
   }
 });
 
-test(
-  "combined Web and Telegram credentials converge only when they resolve to the same User",
-  async () => {
+test("combined Web and Telegram credentials converge only when they resolve to the same User", async () => {
     const repository = new MemoryIdentityRepository();
     repository.addCredential("linked.parent", "user-linked");
     repository.addTelegramIdentity(803441925n, "user-linked");
@@ -161,15 +157,12 @@ test(
       });
       assert.equal(conflict.status, 409);
       assert.deepEqual(await conflict.json(), { error: "AUTH_CONFLICT" });
-    } finally {
-      await server.close();
-    }
-  },
-);
+  } finally {
+    await server.close();
+  }
+});
 
-test(
-  "a Web-authenticated request never provisions an unknown Telegram identity before conflict resolution",
-  async () => {
+test("a Web-authenticated request never provisions an unknown Telegram identity before conflict resolution", async () => {
     const repository = new MemoryIdentityRepository();
     repository.addCredential("linked.parent", "user-linked");
     const server = await startTestServer(appWith(repository));
@@ -195,8 +188,7 @@ test(
       assert.deepEqual(await conflict.json(), { error: "AUTH_CONFLICT" });
       assert.equal(repository.createdTelegramUsers, 0);
       assert.equal(repository.telegramIdentities.has(803441927n), false);
-    } finally {
-      await server.close();
-    }
-  },
-);
+  } finally {
+    await server.close();
+  }
+});
