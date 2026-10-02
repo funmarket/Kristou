@@ -34,11 +34,13 @@ Dedicated ADR files may be added under `docs/adr/` when a decision needs deeper 
 
 ## ADR-003 — Planned runtime split is API, Web, Telegram, Worker
 
-**Decision:** KRISTOU plans four application runtimes: API, Web, Telegram Mini App facade, and Worker.
+**Status:** Superseded by ADR-013.
 
-**Reason:** Separate browser/Telegram runtime concerns from business/API authority and asynchronous processing.
+**Historical decision:** KRISTOU originally planned four application runtimes: API, Web, Telegram Mini App facade, and Worker.
 
-**Current-state note:** This is architecture direction only. These runtimes are not yet implemented.
+**Why superseded:** Source implementation proved that treating Telegram as a separate source-owning application package allows runtime ownership to diverge from the one-product requirement. Browser and Telegram host mechanics may differ, but they must not own separate product frontends.
+
+**Superseded by:** ADR-013.
 
 ---
 
@@ -103,6 +105,26 @@ Dedicated ADR files may be added under `docs/adr/` when a decision needs deeper 
 **Decision:** Server configuration uses `APP_ENV` and public Web configuration uses `VITE_APP_ENV` with the allowed values `local | staging | production`. KRISTOU does not infer security-sensitive runtime behavior from `NODE_ENV` alone.
 
 **Reason:** Build tools and hosting platforms may set `NODE_ENV` for optimization independently of KRISTOU's deployment environment. An explicit application environment keeps fail-closed configuration behavior deliberate and testable.
+
+---
+
+## ADR-013 — One canonical product frontend; Railway is current hosting authority
+
+**Status:** Accepted.
+
+**Context:** KRISTOU must support normal Browser and Telegram WebView access without creating two product implementations. The current deployed source also proves Railway is the hosting authority for the candidate, while Cloudflare is not serving the frontend.
+
+**Decision:** KRISTOU has one canonical React/TypeScript product frontend. `apps/web` is the target owner of the canonical application entry, route authority, product shell, and runtime composition for both normal Browser and Telegram WebView. Shared product feature UI/state/API integration belongs in `packages/frontend`; domain-neutral presentation belongs in `packages/ui`. Telegram-specific code is limited to host/runtime adaptation such as validated `initData` transport, lifecycle, viewport/safe-area, BackButton, haptics/native host integration, and compatible entry/deep-link behavior.
+
+Current `apps/telegram/src` ownership is recovery debt and must be migrated with move -> prove -> remove. It must not be expanded into a second router, provider, shell, feature tree, product state store, domain API client, asset authority, or business implementation.
+
+Railway is the current verified hosting/runtime authority for the KRISTOU candidate Web/API services and data services. Cloudflare is reserved for later AI/edge capabilities when explicitly implemented; it is not current frontend hosting authority and must not create a second KRISTOU frontend.
+
+**Reason:** One product owner prevents Browser/Telegram drift, preserves one API/domain authority and one canonical User, and keeps platform differences at the host/transport edge. Recording the current provider boundary prevents unrelated Cloudflare checks from being mistaken for the live application deployment path.
+
+**Consequences:** Architecture checks must eventually reject reintroduction of a second Telegram product source owner. Deployment evidence must be verified against the provider actually serving the candidate. A future hosting-provider change requires explicit architecture/deployment review and fresh live proof.
+
+**Supersedes / Superseded by:** Supersedes ADR-003.
 
 ---
 
