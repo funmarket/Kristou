@@ -73,11 +73,7 @@ test("invalid, tampered, stale, and user-less Telegram initData are rejected", a
     const tampered = new URLSearchParams(valid);
     tampered.set(
       "user",
-      JSON.stringify({
-        id: 803441999,
-        username: "tampered",
-        first_name: "Tampered",
-      }),
+      JSON.stringify({ id: 803441999, username: "tampered", first_name: "Tampered" }),
     );
     const tamperedResponse = await fetch(`${server.baseUrl}/auth/me`, {
       headers: { "x-telegram-init-data": tampered.toString() },
