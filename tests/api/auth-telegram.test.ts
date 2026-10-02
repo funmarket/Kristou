@@ -73,7 +73,11 @@ test("invalid, tampered, stale, and user-less Telegram initData are rejected", a
     const tampered = new URLSearchParams(valid);
     tampered.set(
       "user",
-      JSON.stringify({ id: 803441999, username: "tampered", first_name: "Tampered" }),
+      JSON.stringify({
+        id: 803441999,
+        username: "tampered",
+        first_name: "Tampered",
+      }),
     );
     const tamperedResponse = await fetch(`${server.baseUrl}/auth/me`, {
       headers: { "x-telegram-init-data": tampered.toString() },
@@ -123,74 +127,80 @@ test("Telegram-only authentication can provision one canonical User", async () =
   }
 });
 
-test("combined Web and Telegram credentials converge only when they resolve to the same User", async () => {
-  const repository = new MemoryIdentityRepository();
-  repository.addCredential("linked.parent", "user-linked");
-  repository.addTelegramIdentity(803441925n, "user-linked");
-  repository.addTelegramIdentity(803441926n, "user-other");
-  const server = await startTestServer(appWith(repository));
+test(
+  "combined Web and Telegram credentials converge only when they resolve to the same User",
+  async () => {
+    const repository = new MemoryIdentityRepository();
+    repository.addCredential("linked.parent", "user-linked");
+    repository.addTelegramIdentity(803441925n, "user-linked");
+    repository.addTelegramIdentity(803441926n, "user-other");
+    const server = await startTestServer(appWith(repository));
 
-  try {
-    const login = await fetch(`${server.baseUrl}/auth/login`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        loginUsername: "linked.parent",
-        password: correctPassword,
-      }),
-    });
-    assert.equal(login.status, 200);
-    const cookie = sessionCookieFrom(login);
+    try {
+      const login = await fetch(`${server.baseUrl}/auth/login`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          loginUsername: "linked.parent",
+          password: correctPassword,
+        }),
+      });
+      assert.equal(login.status, 200);
+      const cookie = sessionCookieFrom(login);
 
-    const same = await fetch(`${server.baseUrl}/auth/me`, {
-      headers: {
-        cookie,
-        "x-telegram-init-data": signedFor(803441925),
-      },
-    });
-    assert.equal(same.status, 200);
-    assert.deepEqual(await same.json(), { principal: { userId: "user-linked" } });
+      const same = await fetch(`${server.baseUrl}/auth/me`, {
+        headers: {
+          cookie,
+          "x-telegram-init-data": signedFor(803441925),
+        },
+      });
+      assert.equal(same.status, 200);
+      assert.deepEqual(await same.json(), { principal: { userId: "user-linked" } });
 
-    const conflict = await fetch(`${server.baseUrl}/auth/me`, {
-      headers: {
-        cookie,
-        "x-telegram-init-data": signedFor(803441926),
-      },
-    });
-    assert.equal(conflict.status, 409);
-    assert.deepEqual(await conflict.json(), { error: "AUTH_CONFLICT" });
-  } finally {
-    await server.close();
-  }
-});
+      const conflict = await fetch(`${server.baseUrl}/auth/me`, {
+        headers: {
+          cookie,
+          "x-telegram-init-data": signedFor(803441926),
+        },
+      });
+      assert.equal(conflict.status, 409);
+      assert.deepEqual(await conflict.json(), { error: "AUTH_CONFLICT" });
+    } finally {
+      await server.close();
+    }
+  },
+);
 
-test("a Web-authenticated request never provisions an unknown Telegram identity before conflict resolution", async () => {
-  const repository = new MemoryIdentityRepository();
-  repository.addCredential("linked.parent", "user-linked");
-  const server = await startTestServer(appWith(repository));
+test(
+  "a Web-authenticated request never provisions an unknown Telegram identity before conflict resolution",
+  async () => {
+    const repository = new MemoryIdentityRepository();
+    repository.addCredential("linked.parent", "user-linked");
+    const server = await startTestServer(appWith(repository));
 
-  try {
-    const login = await fetch(`${server.baseUrl}/auth/login`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        loginUsername: "linked.parent",
-        password: correctPassword,
-      }),
-    });
-    const cookie = sessionCookieFrom(login);
+    try {
+      const login = await fetch(`${server.baseUrl}/auth/login`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          loginUsername: "linked.parent",
+          password: correctPassword,
+        }),
+      });
+      const cookie = sessionCookieFrom(login);
 
-    const conflict = await fetch(`${server.baseUrl}/auth/me`, {
-      headers: {
-        cookie,
-        "x-telegram-init-data": signedFor(803441927),
-      },
-    });
-    assert.equal(conflict.status, 409);
-    assert.deepEqual(await conflict.json(), { error: "AUTH_CONFLICT" });
-    assert.equal(repository.createdTelegramUsers, 0);
-    assert.equal(repository.telegramIdentities.has(803441927n), false);
-  } finally {
-    await server.close();
-  }
-});
+      const conflict = await fetch(`${server.baseUrl}/auth/me`, {
+        headers: {
+          cookie,
+          "x-telegram-init-data": signedFor(803441927),
+        },
+      });
+      assert.equal(conflict.status, 409);
+      assert.deepEqual(await conflict.json(), { error: "AUTH_CONFLICT" });
+      assert.equal(repository.createdTelegramUsers, 0);
+      assert.equal(repository.telegramIdentities.has(803441927n), false);
+    } finally {
+      await server.close();
+    }
+  },
+);
