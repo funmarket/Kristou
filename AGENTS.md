@@ -116,7 +116,21 @@ Mandatory:
 - PostgreSQL is durable business truth;
 - Redis is transient infrastructure only where explicitly designed;
 - object storage owns media bytes;
-- Web and Telegram are delivery/authentication surfaces over the same canonical product state.
+- Browser and Telegram WebView are delivery/authentication contexts of the same canonical product state.
+
+### One product frontend — hard lock
+
+KRISTOU has one canonical React/TypeScript product frontend.
+
+Target ownership:
+
+- `apps/web` owns the canonical React application entry, route authority, product shell, and runtime composition for normal Browser + Telegram WebView;
+- product feature UI/state/API integration belongs in `packages/frontend` under the owning feature/domain boundary;
+- `packages/ui` remains domain-neutral presentation/tokens/assets;
+- Telegram-specific code is limited to host/runtime mechanics such as validated `initData` transport, lifecycle, viewport/safe-area, BackButton, haptics/native host integration, and compatible entry/deep-link behavior;
+- no second Telegram router, provider, shell, feature tree, product state store, domain API client, asset authority, or business behavior is allowed.
+
+Current-state caveat: `apps/telegram/src` still exists in the deployed source lineage and currently owns Telegram runtime mechanics. Treat that as recovery debt, not as target architecture. When moving those mechanics, use move -> prove -> remove. Do not copy them into a new owner and leave both implementations active.
 
 ### No monolithic authorities
 
@@ -136,14 +150,17 @@ Genuinely generic primitives may be shared, but shared code must never become a 
 
 ## 6. Branching, parallel-agent, and concurrency boundary
 
-KRISTOU follows the same integration-branch discipline proven in HoomaUltimate:
+KRISTOU uses an integration-branch workflow, but branch names are not authority by themselves. Fresh source/runtime inspection decides which commit is the valid starting state.
+
+Integration branch discipline:
 
 - `main` is not the day-to-day implementation branch.
-- `phase-0-foundation` is the long-lived Phase 0 integration branch.
-- Every implementation slice branches from the current verified `phase-0-foundation` HEAD.
+- `phase-0-foundation` is the long-lived Phase 0 integration branch after accepted recovery/reconciliation work lands.
+- Before branching a new implementation slice, verify the exact current `phase-0-foundation` HEAD and confirm it contains the most recently accepted foundation/build/runtime work.
+- Railway deployment branches/services are deployment evidence, not a substitute for integration-branch authority.
+- If a verified deployed/source lineage is ahead of `phase-0-foundation`, reconcile it through a reviewed PR before new feature work branches from the integration line.
+- After reconciliation, branch new work only from the newly verified integration HEAD.
 - Slice branches use focused names such as `foundation/<task>`, `feat/<domain-slice>`, or `fix/<issue>`.
-- A slice is reviewed and merged back into `phase-0-foundation`; do not merge ordinary implementation work directly into `main`.
-- Before starting the next slice, verify the new `phase-0-foundation` HEAD and branch from that exact commit.
 - `main` moves only through an explicit owner-approved release/foundation promotion.
 
 Unless the product owner explicitly instructs otherwise, never interfere with another agent's active work.
@@ -156,7 +173,7 @@ Do not:
 - overwrite a non-fast-forward update;
 - modify unrelated files while "already in the area";
 - adopt another agent's task without authorization;
-- branch a new implementation slice from stale `main` when `phase-0-foundation` exists.
+- branch a new implementation slice from stale `main` or from an integration head known to be stale relative to accepted/deployed source lineage awaiting reconciliation.
 
 If HEAD changes after the initial snapshot:
 
@@ -164,7 +181,7 @@ If HEAD changes after the initial snapshot:
 2. inspect the new HEAD and incoming diff;
 3. determine whether it overlaps the current task;
 4. stop and report if ownership overlaps or is unclear;
-5. if clearly unrelated, rebuild on the new `phase-0-foundation` HEAD without altering incoming work.
+5. if clearly unrelated, rebuild on the freshly verified authoritative integration/source HEAD without altering incoming work.
 
 ---
 
@@ -186,6 +203,12 @@ Documentation is part of implementation. Every completed task must audit and upd
 Do not create overlapping architecture or status documents.
 
 Open PR work is in-flight, not current foundation truth.
+
+### Deployment authority
+
+Current verified hosting for the KRISTOU candidate is Railway. Railway owns the current Web/API deployment evidence.
+
+Do not diagnose or rewrite the current Web build merely to satisfy a check from a non-authoritative hosting path. First trace the Railway deployment that actually serves the user-visible application.
 
 ---
 

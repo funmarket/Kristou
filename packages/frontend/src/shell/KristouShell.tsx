@@ -1,15 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  applyTheme,
-  DEFAULT_THEME,
-  type Theme,
-} from "@kristou/ui";
-import {
-  applyLocale,
-  translations,
-  type Locale,
-} from "../i18n/index.js";
-import "./KristouShell.css";
+import { applyTheme, DEFAULT_THEME, type Theme } from "@kristou/ui";
+import { applyLocale, translations, type Locale } from "../i18n/index.js";
 
 export interface KristouShellProps {
   children?: React.ReactNode;
@@ -32,10 +23,7 @@ function setDocumentLocale(locale: Locale): void {
   applyLocale(document.documentElement, locale);
 }
 
-export function KristouShell({
-  children,
-  logoSrc = "/kristou-logo.png",
-}: KristouShellProps) {
+export function KristouShell({ children, logoSrc = "/kristou-logo.png" }: KristouShellProps) {
   const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
   const [locale, setLocale] = useState<Locale>("en");
   const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
@@ -68,9 +56,7 @@ export function KristouShell({
             aria-label={t.notifications}
             aria-expanded={openPanel === "notifications"}
             onClick={() =>
-              setOpenPanel((current) =>
-                current === "notifications" ? null : "notifications",
-              )
+              setOpenPanel((current) => (current === "notifications" ? null : "notifications"))
             }
           >
             <span aria-hidden="true">🔔</span>
@@ -81,9 +67,7 @@ export function KristouShell({
             type="button"
             aria-label={t.account}
             aria-expanded={openPanel === "account"}
-            onClick={() =>
-              setOpenPanel((current) => (current === "account" ? null : "account"))
-            }
+            onClick={() => setOpenPanel((current) => (current === "account" ? null : "account"))}
           >
             <span className="k-avatar-placeholder" aria-hidden="true">
               K
@@ -116,7 +100,11 @@ export function KristouShell({
               aria-modal="true"
               aria-label={t.notifications}
             >
-              <PanelHeader title={t.notifications} closeLabel={t.close} onClose={() => setOpenPanel(null)} />
+              <PanelHeader
+                title={t.notifications}
+                closeLabel={t.close}
+                onClose={() => setOpenPanel(null)}
+              />
               <p className="k-empty-state">{t.noNotifications}</p>
             </section>
           ) : (
@@ -126,7 +114,11 @@ export function KristouShell({
               aria-modal="true"
               aria-label={t.account}
             >
-              <PanelHeader title={t.account} closeLabel={t.close} onClose={() => setOpenPanel(null)} />
+              <PanelHeader
+                title={t.account}
+                closeLabel={t.close}
+                onClose={() => setOpenPanel(null)}
+              />
 
               <div className="k-settings-group">
                 <div>

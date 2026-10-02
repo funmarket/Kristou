@@ -50,12 +50,7 @@ if (entries.includes(".env")) {
 
 try {
   const envExample = await readFile(path.join(root, ".env.example"), "utf8");
-  for (const key of [
-    "DATABASE_URL",
-    "REDIS_URL",
-    "SESSION_TOKEN_PEPPER",
-    "TELEGRAM_BOT_TOKEN",
-  ]) {
+  for (const key of ["DATABASE_URL", "REDIS_URL", "SESSION_TOKEN_PEPPER", "TELEGRAM_BOT_TOKEN"]) {
     if (!envExample.includes(`${key}=`)) {
       console.error(`Deploy preflight failed. .env.example is missing ${key}.`);
       process.exit(1);

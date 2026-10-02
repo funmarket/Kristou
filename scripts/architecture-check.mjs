@@ -45,9 +45,7 @@ async function owningManifest(file) {
   if (!match) return null;
 
   try {
-    return JSON.parse(
-      await readFile(path.join(root, match[1], match[2], "package.json"), "utf8"),
-    );
+    return JSON.parse(await readFile(path.join(root, match[1], match[2], "package.json"), "utf8"));
   } catch {
     return null;
   }
@@ -141,18 +139,14 @@ for (const file of await walk(root)) {
     for (const imported of imports) {
       const internal = internalPackageName(imported);
       if (internal && internal !== manifest.name && !(internal in declared)) {
-        violations.push(
-          `${normalized}: imports undeclared workspace dependency ${internal}`,
-        );
+        violations.push(`${normalized}: imports undeclared workspace dependency ${internal}`);
       }
     }
   }
 }
 
 if (violations.length > 0) {
-  console.error(
-    "Architecture check failed:\n" + violations.map((item) => `- ${item}`).join("\n"),
-  );
+  console.error("Architecture check failed:\n" + violations.map((item) => `- ${item}`).join("\n"));
   process.exit(1);
 }
 

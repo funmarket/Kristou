@@ -5,7 +5,7 @@ import { JSDOM } from "jsdom";
 import { KristouShell } from "../../packages/frontend/src/shell/KristouShell.tsx";
 
 function installDom() {
-  const dom = new JSDOM("<!doctype html><html><body><div id=\"root\"></div></body></html>", {
+  const dom = new JSDOM('<!doctype html><html><body><div id="root"></div></body></html>', {
     url: "http://localhost/",
   });
 

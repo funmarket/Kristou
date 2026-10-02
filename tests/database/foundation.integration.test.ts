@@ -176,10 +176,7 @@ test("concurrent redemption can consume one account-link challenge only once", a
     });
 
   const results = await Promise.all([consume(), consume()]);
-  assert.deepEqual(
-    results.map((result) => result.count).sort(),
-    [0, 1],
-  );
+  assert.deepEqual(results.map((result) => result.count).sort(), [0, 1]);
 
   const consumed = await db.accountLinkChallenge.findUniqueOrThrow({
     where: { id: challenge.id },

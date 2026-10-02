@@ -50,7 +50,7 @@ Documentation is part of implementation. If architecture or ownership changes, t
 
 ## 2. Repository topology
 
-Planned clean monorepo foundation:
+Current implemented Phase 0 foundation:
 
 ```text
 Kristou/
@@ -90,7 +90,9 @@ Kristou/
   README.md
 ```
 
-This topology is a target architecture. The repository is currently documentation-only. Do not claim apps/packages exist until they are created and verified.
+The listed apps/packages exist in the verified deployed source lineage. Their presence is current-state evidence, not permission to preserve accidental ownership indefinitely.
+
+Current verified deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`, source-identical to `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`.
 
 Do not add a top-level app/package merely to avoid an existing ownership boundary.
 
@@ -115,27 +117,33 @@ Business policy must not live directly in HTTP handlers.
 
 ### `apps/web`
 
-Owns:
+Target owner of the canonical KRISTOU product frontend for both normal Browser and Telegram WebView delivery contexts:
 
-- canonical browser application entry;
-- browser routing;
+- canonical React application entry;
+- canonical route authority;
+- canonical responsive application shell;
+- browser runtime composition;
+- Telegram host/runtime adapters;
 - Web authentication screens;
-- responsive application shell;
-- Web runtime behavior.
+- runtime-specific transport configuration.
 
 It consumes shared feature UI and contracts where appropriate but does not own backend business rules.
 
 ### `apps/telegram`
 
-Owns the Telegram Mini App runtime facade:
+Current source state: `apps/telegram/src` exists and owns Telegram runtime mechanics. This is recovery debt, not the target product boundary.
 
-- Telegram `initData` handoff;
-- viewport/safe-area behavior;
-- Telegram lifecycle;
-- native Telegram navigation/haptics where used;
-- Telegram-specific shell integration.
+Target state: `apps/telegram`, if retained for compatibility/deployment naming, is facade-only and delegates to the canonical `apps/web` product frontend. It must not own:
 
-It must not create a second KRISTOU product state or Telegram-only business database.
+- a second router/provider/application shell;
+- feature pages/components;
+- product state stores or domain API clients;
+- product assets;
+- business rules or durable state.
+
+Telegram-specific mechanics such as validated `initData` transport, viewport/safe-area, lifecycle, BackButton, haptics/native host integration, and compatible deep-link entry belong behind adapters consumed by the canonical Web application.
+
+Migration rule: move -> prove -> remove. Do not duplicate the current runtime implementation and hide the old owner.
 
 ### `apps/worker`
 
@@ -276,41 +284,41 @@ Cross-domain collaboration uses explicit application ports/readers/orchestrators
 
 This table identifies the intended authoritative owner for known product concepts. Exact code paths do not exist yet and must not be invented before implementation.
 
-| Canonical concept | Authoritative owner | Notes |
-| --- | --- | --- |
-| User, WebCredential, WebSession, TelegramIdentity, account-link challenges | **Identity & Authentication** | One canonical User across Web and Telegram; no heuristic merge. |
-| Roles, capabilities, scoped authorization policy | **Access Control** | Server-side RBAC + resource/attribute scope. |
-| User-facing parent/student/teacher/manager profile data | **People** | Authentication identity remains owned by Identity. |
-| Parent-child guardian relationship | **Family** | Canonical link used by Parent Notes, class access, pickup authorization checks. |
-| AcademicYear, Level, Class | **Academics** | Class identity/lifecycle authority. |
-| Teacher-to-class assignment | **Academics** | Class-scoped teacher authority source. |
-| EnrollmentApplication, review lifecycle, Enrollment | **Enrollment** | Acceptance does not itself grant class access until enrollment/assignment exists. |
-| Student-to-class active assignment/membership | **Academics** | Must reference valid enrollment; no duplicate class roster authority elsewhere. |
-| Class Announcements | **Class Community** | Private class content scoped by canonical Class membership. |
-| Homework & Classwork | **Class Community** | Teacher-controlled class learning content. |
-| Class Calendar items | **Class Community** | School-wide calendar items remain separate if later modeled. |
-| Class Documents | **Class Community** | Private class content; media bytes use shared storage infrastructure. |
-| Class Gallery | **Class Community** | Private class content. |
-| Student Class Questions and replies | **Class Community** | Class-wide only; no private student DMs initially. |
-| Parent Notes and replies | **Parent Notes** | Own quota/time-window/privacy semantics. |
-| Short operational Message threads/messages | **Messaging** | 200-character rule; must not bypass Parent Notes policy. |
-| Dismissal configuration, pickup state/events, release confirmation | **Pickup** | Safety-critical server authority. |
-| AuthorizedPickupPerson | **Pickup** | Separate concept from Parent role; school-controlled authorization. |
-| SchoolBroadcast | **Broadcasts** | One canonical broadcast; audience projections are not duplicate truth. |
-| User inbox notifications/read state/delivery projections | **Notifications** | Notification is projection/delivery state, not source business truth. |
-| Notification sound/theme/language preference | **Preferences** | Presentation preference only. |
-| Weekly La Toque Gourmande menu and meal content | **Food Menu** | Admin or explicitly authorized Manager may manage. |
-| Public teacher cards/bios/order/visibility | **School Directory** | Public projection/configuration; internal Teacher profile remains People-owned. |
-| Public Administration/School Board cards | **School Directory** | App Admin controls public presentation. |
-| Public homepage/pages/activities/clubs/public gallery | **Public Content** | Public CMS-style content only. |
-| MediaAsset descriptor/lifecycle | **Media** | Product domains own semantic attachment/visibility policy; Media owns generic descriptor lifecycle. |
-| AuditLog | **Audit** | Sensitive operation history; never contains secrets/private message bodies unnecessarily. |
-| OutboxEvent | **Async Foundation** | Durable async handoff infrastructure, not a business domain. |
-| AI Assistant orchestration | **TBD — AI** | Phase 8; do not create durable AI authority before the slice begins. |
-| Grades/report cards | **TBD / out of initial scope** | Do not model until approved. |
-| Attendance | **TBD / out of initial scope** | Pickup is not general attendance. |
-| School transport/bus | **TBD / out of initial scope** | Separate future design required. |
-| Payments | **TBD / out of initial scope** | Do not create speculative payment models. |
+| Canonical concept                                                          | Authoritative owner            | Notes                                                                                               |
+| -------------------------------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------- |
+| User, WebCredential, WebSession, TelegramIdentity, account-link challenges | **Identity & Authentication**  | One canonical User across Web and Telegram; no heuristic merge.                                     |
+| Roles, capabilities, scoped authorization policy                           | **Access Control**             | Server-side RBAC + resource/attribute scope.                                                        |
+| User-facing parent/student/teacher/manager profile data                    | **People**                     | Authentication identity remains owned by Identity.                                                  |
+| Parent-child guardian relationship                                         | **Family**                     | Canonical link used by Parent Notes, class access, pickup authorization checks.                     |
+| AcademicYear, Level, Class                                                 | **Academics**                  | Class identity/lifecycle authority.                                                                 |
+| Teacher-to-class assignment                                                | **Academics**                  | Class-scoped teacher authority source.                                                              |
+| EnrollmentApplication, review lifecycle, Enrollment                        | **Enrollment**                 | Acceptance does not itself grant class access until enrollment/assignment exists.                   |
+| Student-to-class active assignment/membership                              | **Academics**                  | Must reference valid enrollment; no duplicate class roster authority elsewhere.                     |
+| Class Announcements                                                        | **Class Community**            | Private class content scoped by canonical Class membership.                                         |
+| Homework & Classwork                                                       | **Class Community**            | Teacher-controlled class learning content.                                                          |
+| Class Calendar items                                                       | **Class Community**            | School-wide calendar items remain separate if later modeled.                                        |
+| Class Documents                                                            | **Class Community**            | Private class content; media bytes use shared storage infrastructure.                               |
+| Class Gallery                                                              | **Class Community**            | Private class content.                                                                              |
+| Student Class Questions and replies                                        | **Class Community**            | Class-wide only; no private student DMs initially.                                                  |
+| Parent Notes and replies                                                   | **Parent Notes**               | Own quota/time-window/privacy semantics.                                                            |
+| Short operational Message threads/messages                                 | **Messaging**                  | 200-character rule; must not bypass Parent Notes policy.                                            |
+| Dismissal configuration, pickup state/events, release confirmation         | **Pickup**                     | Safety-critical server authority.                                                                   |
+| AuthorizedPickupPerson                                                     | **Pickup**                     | Separate concept from Parent role; school-controlled authorization.                                 |
+| SchoolBroadcast                                                            | **Broadcasts**                 | One canonical broadcast; audience projections are not duplicate truth.                              |
+| User inbox notifications/read state/delivery projections                   | **Notifications**              | Notification is projection/delivery state, not source business truth.                               |
+| Notification sound/theme/language preference                               | **Preferences**                | Presentation preference only.                                                                       |
+| Weekly La Toque Gourmande menu and meal content                            | **Food Menu**                  | Admin or explicitly authorized Manager may manage.                                                  |
+| Public teacher cards/bios/order/visibility                                 | **School Directory**           | Public projection/configuration; internal Teacher profile remains People-owned.                     |
+| Public Administration/School Board cards                                   | **School Directory**           | App Admin controls public presentation.                                                             |
+| Public homepage/pages/activities/clubs/public gallery                      | **Public Content**             | Public CMS-style content only.                                                                      |
+| MediaAsset descriptor/lifecycle                                            | **Media**                      | Product domains own semantic attachment/visibility policy; Media owns generic descriptor lifecycle. |
+| AuditLog                                                                   | **Audit**                      | Sensitive operation history; never contains secrets/private message bodies unnecessarily.           |
+| OutboxEvent                                                                | **Async Foundation**           | Durable async handoff infrastructure, not a business domain.                                        |
+| AI Assistant orchestration                                                 | **TBD — AI**                   | Phase 8; do not create durable AI authority before the slice begins.                                |
+| Grades/report cards                                                        | **TBD / out of initial scope** | Do not model until approved.                                                                        |
+| Attendance                                                                 | **TBD / out of initial scope** | Pickup is not general attendance.                                                                   |
+| School transport/bus                                                       | **TBD / out of initial scope** | Separate future design required.                                                                    |
+| Payments                                                                   | **TBD / out of initial scope** | Do not create speculative payment models.                                                           |
 
 When a future implementation proves a concept belongs elsewhere, update this table and `docs/CANONICAL_MODEL.md` through an explicit architectural decision before code establishes a second authority.
 
@@ -362,13 +370,18 @@ Product domains decide whether media is allowed, private/public, and attached to
 
 ## 8. Web and Telegram boundary
 
-Web and Telegram have separate authentication transports but converge on the same backend identity and product state.
+Normal Browser and Telegram WebView are delivery/authentication contexts of one KRISTOU product. Authentication transport may differ; product frontend ownership does not.
 
 ```text
-Web session ---------\
-                     -> canonical User -> same API/domain state
-Telegram initData ---/
+Normal Browser -----------------\
+Web session                      \
+                                  -> canonical apps/web frontend
+Telegram WebView ---------------/      -> shared @kristou/frontend
+validated initData transport --------> same API/application/domain state
+                                       -> canonical User
 ```
+
+Current source has not completed this topology because Telegram runtime mechanics still live under `apps/telegram/src`. Recovery work must converge that ownership before later feature expansion.
 
 No Telegram-specific copies of:
 
@@ -431,9 +444,12 @@ PostgreSQL stores canonical descriptors/ownership references.
 
 ## 10. Frontend architecture rules
 
-- shared Web/Telegram feature UI belongs in `packages/frontend` when genuinely reusable;
-- runtime shells remain in `apps/web` and `apps/telegram`;
-- design tokens/platform-neutral components belong in `packages/ui`;
+- one canonical React/TypeScript product frontend serves Browser + Telegram WebView;
+- `apps/web` owns the canonical entry, route authority, shell, and runtime composition;
+- shared product feature UI/state/API integration belongs in `packages/frontend` under the owning feature/domain;
+- `packages/ui` owns domain-neutral components, design tokens, themes, accessibility primitives, and governed shared assets;
+- `apps/telegram`, if retained, is facade-only in the target architecture; current source ownership there must be migrated rather than expanded;
+- Telegram host-specific mechanics belong behind adapters consumed by the canonical Web application;
 - one feature must not require loading unrelated domains;
 - server state and authorization must not be replaced by frontend guesses;
 - Arabic RTL, French LTR, and English LTR are foundational;
@@ -441,7 +457,22 @@ PostgreSQL stores canonical descriptors/ownership references.
 
 ---
 
-## 11. No cross-domain monoliths
+## 11. Current deployment boundary
+
+Verified current candidate hosting is Railway:
+
+- `web-candidate` serves the public Web frontend from `deploy-candidate`;
+- `api-candidate` serves the API from the same deployed source lineage;
+- PostgreSQL and Redis are Railway services in the KRISTOU project;
+- the Web build command is `npm run build:web`.
+
+Cloudflare is not current frontend hosting authority. It is reserved for later AI/edge capabilities when that phase is explicitly implemented.
+
+This is deployment evidence, not a permanent provider lock. Any future hosting change requires an explicit architecture/deployment decision and fresh live verification.
+
+---
+
+## 12. No cross-domain monoliths
 
 Never create:
 
@@ -456,7 +487,7 @@ If a workflow crosses domains, compose narrow interfaces and preserve ownership.
 
 ---
 
-## 12. Architecture completion rule
+## 13. Architecture completion rule
 
 A new domain/slice is architecturally acceptable only when:
 

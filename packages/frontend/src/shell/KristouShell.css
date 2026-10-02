@@ -17,10 +17,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding:
-    calc(8px + var(--k-safe-top))
-    calc(10px + var(--k-safe-right))
-    8px
+  padding: calc(8px + var(--k-safe-top)) calc(10px + var(--k-safe-right)) 8px
     calc(10px + var(--k-safe-left));
   border-bottom: 1px solid var(--k-line);
   background: color-mix(in srgb, var(--k-surface) 94%, transparent);

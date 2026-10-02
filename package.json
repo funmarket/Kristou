@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "dev": "node scripts/run-workspace-script.mjs dev all",
+    "build:web": "npm -w @kristou/config run build && npm -w @kristou/ui run build && npm -w @kristou/frontend run build && npm -w @kristou/web run build",
     "build:packages": "node scripts/run-workspace-script.mjs build packages",
     "build:apps": "node scripts/run-workspace-script.mjs build apps",
     "build": "npm run build:packages && npm run build:apps",
@@ -20,7 +21,7 @@
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write . --ignore-unknown",
     "format:check": "prettier --check . --ignore-unknown",
-    "test": "node scripts/run-tests.mjs unit",
+    "test": "npm run prepare:runtime && npm run test:unit:prepared",
     "test:integration": "node scripts/run-tests.mjs integration",
     "architecture:check": "node scripts/architecture-check.mjs",
     "deploy:preflight": "node scripts/deploy-preflight.mjs",
@@ -29,7 +30,9 @@
     "db:generate": "npm -w @kristou/database run generate",
     "db:validate": "npm -w @kristou/database run validate",
     "db:migrate:deploy": "npm -w @kristou/database run migrate:deploy",
-    "db:migrate:status": "npm -w @kristou/database run migrate:status"
+    "db:migrate:status": "npm -w @kristou/database run migrate:status",
+    "prepare:runtime": "npm run db:generate && npm run build:packages",
+    "test:unit:prepared": "node scripts/run-tests.mjs unit"
   },
   "devDependencies": {
     "@testing-library/react": "16.3.0",

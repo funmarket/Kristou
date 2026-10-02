@@ -1,6 +1,10 @@
-import { readdir, readFile } from "node:fs/promises";
-import path from "node:path";
 import { spawnSync } from "node:child_process";
+import {
+  buildWorkspaceGraph,
+  discoverWorkspaces,
+  selectWorkspaces,
+  topologicalOrder,
+} from "./workspace-graph.mjs";
 
 const [script, scope = "all"] = process.argv.slice(2);
 if (!script || !["all", "apps", "packages"].includes(scope)) {
@@ -8,39 +12,26 @@ if (!script || !["all", "apps", "packages"].includes(scope)) {
   process.exit(2);
 }
 
-const root = process.cwd();
-const roots = scope === "all" ? ["packages", "apps"] : [scope];
-const workspaces = [];
+const graph = buildWorkspaceGraph(await discoverWorkspaces(process.cwd()));
+const participants = selectWorkspaces(graph, scope).filter(
+  (name) => graph.workspaces.get(name).manifest.scripts?.[script],
+);
 
-for (const group of roots) {
-  const directory = path.join(root, group);
-  let entries;
-  try {
-    entries = await readdir(directory, { withFileTypes: true });
-  } catch (error) {
-    if (error?.code === "ENOENT") continue;
-    throw error;
-  }
-
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-    const manifestPath = path.join(directory, entry.name, "package.json");
-    try {
-      const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
-      if (manifest.scripts?.[script]) workspaces.push(manifest.name);
-    } catch (error) {
-      if (error?.code !== "ENOENT") throw error;
-    }
-  }
-}
-
-if (workspaces.length === 0) {
+if (participants.length === 0) {
   console.log(`No workspaces with script "${script}" found in scope "${scope}".`);
   process.exit(0);
 }
 
+let ordered;
+try {
+  ordered = topologicalOrder(graph, participants);
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error);
+  process.exit(1);
+}
+
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
-for (const workspace of workspaces.sort()) {
+for (const workspace of ordered) {
   const result = spawnSync(npmCommand, ["-w", workspace, "run", script], {
     stdio: "inherit",
     env: process.env,

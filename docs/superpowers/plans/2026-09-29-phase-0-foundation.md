@@ -4,11 +4,27 @@
 
 **Goal:** Establish the clean, testable KRISTOU SCHOOL monorepo foundation that all later domains can build on without duplicating authority, while delivering the approved phone-first Web shell, trilingual/RTL/theme primitives, canonical identity/auth foundations, database/outbox/audit primitives, API/Worker runtimes, and CI/security gates.
 
-**Architecture:** KRISTOU uses npm workspaces with separate `apps/api`, `apps/web`, `apps/telegram`, and `apps/worker` runtimes plus focused shared packages. PostgreSQL owns durable truth; Redis is transient only; object storage is abstracted but not required for the first local boot. Web and Telegram resolve to one canonical User. Product domains remain separate and are not implemented in this plan.
+**Architecture:** KRISTOU uses npm workspaces with `apps/api`, one canonical product frontend owned by `apps/web`, `apps/worker`, and an optional facade-only `apps/telegram` package for compatibility/deployment naming. Normal Browser and Telegram WebView enter the same React/TypeScript product; Telegram-specific code is host/runtime adaptation only. PostgreSQL owns durable truth; Redis is transient only; object storage is abstracted but not required for the first local boot. Web and Telegram authentication transports resolve to one canonical User. Product domains remain separate and are not implemented in this plan.
 
 **Tech Stack:** Node.js 22 LTS-compatible runtime, npm workspaces, TypeScript 5.9.x, React 19.x, Vite 7.x, Express 5.x, Zod 4.x, Prisma 6.19.x, Argon2id, React Router, Testing Library, Node test runner/Vitest-compatible focused tests as selected in Task 1, ESLint, Prettier.
 
 **Spec:** `requirements.md`, `structure.md`, `docs/CANONICAL_MODEL.md`, `docs/DECISIONS.md`, and the owner-approved visual/template package from the current KRISTOU design checkpoint. The attached `ggd.png` logo is the official source asset and must be copied unchanged into the repository when Task 4 executes.
+
+## Recovery snapshot and supersession note
+
+This plan began before the Phase 0 foundation was implemented. The following is a dated recovery snapshot from 2026-10-02, before integration reconciliation:
+
+- deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`;
+- source-identical implementation head: `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
+- Foundation CI run `36922103675` succeeded on exact source head `2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
+- Railway `web-candidate` and `api-candidate` deployments from `deploy-candidate` were successful;
+- pre-reconciliation `phase-0-foundation` was `0ac85b23c6e0f88bae8293496c890ca681c4915f`;
+- current `apps/telegram/src` source ownership is recovery debt and is superseded by the one-product frontend architecture in ADR-013;
+- Cloudflare frontend/repository build integration is not part of the current hosting path; Cloudflare remains deferred to later AI/edge work if explicitly introduced.
+
+The SHAs above are historical evidence, not permanent current-state authority. Re-read the exact integration HEAD and Railway deployment state before consequential work.
+
+Tasks below retain the original Phase 0 scope, but any step contradicted by the current governing architecture or fresh runtime evidence is superseded by the corrected wording in this revision.
 
 ## Global Constraints
 
@@ -17,14 +33,14 @@
 - Arabic, French, and English are foundational. Arabic uses RTL in the same component tree.
 - Touch surfaces must not show thick browser-default scrollbars. Mobile scrollbars are effectively transparent/hidden; pointer/desktop scrollbars are thin and unobtrusive.
 - The supplied `ggd.png` logo is used unchanged. No regeneration, redraw, recolor, restyling, or alternate logo.
-- One canonical User across Web and Telegram; no heuristic account merging.
+- One canonical product frontend across Browser and Telegram WebView, plus one canonical User across Web and Telegram authentication transports; no heuristic account merging.
 - Authorization is server-side. UI visibility never grants authority.
 - PostgreSQL is durable truth. Redis is transient. Object storage owns bytes when introduced.
 - No cross-domain monoliths, catch-all business services, giant stores, or duplicate authorities.
 - No Pickup, Parent Notes, Enrollment, Class Community, Messaging, Food Menu, Broadcast, or School Directory business implementation in this Phase 0 plan.
 - No production secrets in source, docs, screenshots, browser bundles, or test fixtures.
 - Every successful implementation task updates `progress.md` and any affected governing docs.
-- Do not create Railway, Cloudflare, or a Telegram bot before the explicit infrastructure gates in Tasks 9 and 10.
+- Railway already hosts the verified candidate. Do not mutate Railway during Phase 0 recovery unless explicitly authorized. Cloudflare is deferred to later AI/edge work and is not a Phase 0 frontend-hosting requirement. A Telegram bot remains gated by Task 10.
 
 ## Review Focus
 
@@ -47,8 +63,7 @@ Kristou/
 │   │       └── http/
 │   ├── web/
 │   │   └── src/
-│   ├── telegram/
-│   │   └── src/
+│   ├── telegram/   # optional facade-only package; no product source tree in target state
 │   └── worker/
 │       └── src/
 ├── packages/
@@ -86,6 +101,7 @@ Kristou/
 ### Task 1: Bootstrap the workspace and verification toolchain
 
 **Files:**
+
 - Create: `package.json`
 - Create: `package-lock.json`
 - Create: `tsconfig.base.json`
@@ -99,6 +115,7 @@ Kristou/
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces root commands used by every later task: `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run architecture:check`, `npm run deploy:preflight`, `npm run check`.
 - Establishes npm workspace globs `apps/*` and `packages/*`.
 
@@ -133,6 +150,7 @@ Pin exact versions in the committed lockfile. Do not use floating unpinned works
 - [ ] **Step 4: Implement `scripts/architecture-check.mjs` with foundation-only dependency rules.**
 
 It must fail when:
+
 - an app is imported by a package;
 - `packages/domain` imports API/HTTP/database infrastructure;
 - frontend packages import `packages/database`;
@@ -142,6 +160,7 @@ It must fail when:
 - [ ] **Step 5: Implement `scripts/deploy-preflight.mjs`.**
 
 At this stage it checks only repository/deploy prerequisites that can be known locally:
+
 - package lock exists;
 - required root scripts exist;
 - production-required environment variables are enumerated by config package once Task 2 exists;
@@ -150,6 +169,7 @@ At this stage it checks only repository/deploy prerequisites that can be known l
 - [ ] **Step 6: Run the workspace bootstrap verification.**
 
 Run:
+
 ```bash
 npm ci
 npm run format:check
@@ -164,6 +184,7 @@ Expected: PASS. `npm run typecheck/build/test` may remain partial until workspac
 - [ ] **Step 8: Commit.**
 
 Suggested commit:
+
 ```text
 chore: bootstrap KRISTOU workspace toolchain
 ```
@@ -173,6 +194,7 @@ chore: bootstrap KRISTOU workspace toolchain
 ### Task 2: Create focused shared package skeletons and config authority
 
 **Files:**
+
 - Create: `packages/config/package.json`
 - Create: `packages/config/tsconfig.json`
 - Create: `packages/config/src/index.ts`
@@ -191,12 +213,14 @@ chore: bootstrap KRISTOU workspace toolchain
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces `loadApiConfig(env)`, `loadWorkerConfig(env)`, and `loadWebPublicConfig(env)`.
 - Produces shared primitive exports only; no feature-domain contracts yet.
 
 - [ ] **Step 1: Write config tests first.**
 
 Tests must prove:
+
 - development can use explicit local values;
 - production rejects missing `DATABASE_URL`, `REDIS_URL`, session secret/pepper, and allowed origin configuration once those runtimes require them;
 - public Web config cannot expose `TELEGRAM_BOT_TOKEN`, `DATABASE_URL`, session pepper, or object-storage secrets;
@@ -231,6 +255,7 @@ Expected: PASS.
 - [ ] **Step 7: Update docs/progress and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU configuration authority
 ```
@@ -240,6 +265,7 @@ feat: add KRISTOU configuration authority
 ### Task 3: Bootstrap the API and Worker runtimes with health contracts
 
 **Files:**
+
 - Create: `apps/api/package.json`
 - Create: `apps/api/tsconfig.json`
 - Create: `apps/api/src/bootstrap/server.ts`
@@ -254,6 +280,7 @@ feat: add KRISTOU configuration authority
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - API produces `GET /health/live` and `GET /health/ready`.
 - Worker produces process/runtime health primitives that later deployment health checks can call or expose through the chosen worker health adapter.
 - Both consume `@kristou/config`.
@@ -261,6 +288,7 @@ feat: add KRISTOU configuration authority
 - [ ] **Step 1: Write failing API health/startup tests.**
 
 Assertions:
+
 - liveness returns 200 when process is up;
 - readiness fails when mandatory runtime dependencies are not initialized;
 - invalid production configuration stops startup before serving requests.
@@ -286,6 +314,7 @@ Expected: PASS.
 - [ ] **Step 5: Update `progress.md` and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU API and worker foundations
 ```
@@ -295,6 +324,7 @@ feat: add KRISTOU API and worker foundations
 ### Task 4: Implement the phone-first UI/design-system foundation and Web shell
 
 **Files:**
+
 - Create: `packages/ui/package.json`
 - Create: `packages/ui/tsconfig.json`
 - Create: `packages/ui/src/index.tsx`
@@ -318,6 +348,7 @@ feat: add KRISTOU API and worker foundations
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces `KristouShell`, theme tokens, locale/direction primitives, and official logo asset.
 - Web app consumes shared shell rather than duplicating it.
 
@@ -330,6 +361,7 @@ No image-generation/editing step is allowed.
 - [ ] **Step 2: Write failing shell/theme/i18n tests.**
 
 Must assert:
+
 - default document/theme is Light even when OS preference is dark;
 - toggling dark produces `data-theme="dark"` and `#000000` foundation;
 - Arabic switches document direction to RTL;
@@ -340,6 +372,7 @@ Must assert:
 - [ ] **Step 3: Implement semantic theme tokens.**
 
 Required baseline:
+
 ```text
 Light:
   background: light/white
@@ -353,11 +386,13 @@ KRISTOU teal/gold are accents only.
 - [ ] **Step 4: Implement governed scroll behavior.**
 
 Mobile/touch:
+
 - preserve native overflow scrolling;
 - hide/transparent scrollbar chrome;
 - never disable scrolling merely to hide scrollbars.
 
 Desktop/pointer:
+
 - thin, low-contrast scrollbar;
 - transparent track;
 - subtle thumb only when useful.
@@ -371,6 +406,7 @@ Start with shell/navigation/settings strings only. Do not duplicate components p
 - [ ] **Step 6: Implement the approved phone-first shell.**
 
 Header:
+
 ```text
 [official KRISTOU logo + KRISTOU SCHOOL] [bell] [avatar]
 ```
@@ -390,6 +426,7 @@ Expected: PASS.
 - [ ] **Step 8: Perform manual responsive QA at representative phone widths.**
 
 At minimum:
+
 - 320 px;
 - 360 px;
 - 390/393 px;
@@ -401,42 +438,58 @@ Check Light, Pitch Black, Arabic RTL, English/French LTR, sheets, header, and sc
 - [ ] **Step 9: Update progress/docs and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU phone-first UI foundation
 ```
 
 ---
 
-### Task 5: Create the Telegram runtime facade without a bot credential
+### Task 5: Converge Telegram host mechanics into the canonical Web frontend without a bot credential
 
-**Files:**
-- Create: `apps/telegram/package.json`
-- Create: `apps/telegram/tsconfig.json`
-- Create: `apps/telegram/src/index.ts`
-- Create: `apps/telegram/src/runtime.ts`
-- Test: `tests/telegram/runtime.test.ts`
+**Current-state note:** The original implementation created `apps/telegram/src/runtime.ts`. That source exists today and is covered by focused runtime tests, but ADR-013 now classifies that ownership as recovery debt rather than the target architecture.
+
+**Files for the recovery version of this task:**
+
+- Create: `apps/web/src/telegram/runtime.ts`
+- Modify: `tests/telegram/runtime.test.ts` to import the canonical Web-owned runtime
+- Modify: `apps/telegram/package.json` only if a compatibility/deployment facade remains necessary
+- Delete only after replacement proof: `apps/telegram/src/index.ts`, `apps/telegram/src/runtime.ts`, `apps/telegram/tsconfig.json`
+- Modify: `scripts/architecture-check.mjs`
 - Modify: `progress.md`
 
 **Interfaces:**
-- Produces a Telegram-specific runtime adapter for viewport/safe-area/lifecycle behavior.
-- Reuses `@kristou/frontend` and `@kristou/ui`.
-- Does **not** yet require `TELEGRAM_BOT_TOKEN`.
 
-- [ ] **Step 1: Write tests proving Telegram runtime does not create separate business state.**
+- Produces one Telegram host/runtime adapter owned by the canonical Web application for viewport/safe-area/lifecycle behavior.
+- The adapter may later expose validated `initData`, BackButton, haptics/native integration, and Telegram host facts, but must not own product feature state.
+- Reuses the same `@kristou/frontend` and `@kristou/ui` product UI as normal Browser delivery.
+- Does **not** require `TELEGRAM_BOT_TOKEN` merely to provide host/runtime behavior.
+- `apps/telegram`, if retained, delegates to the Web product and owns no second source tree/router/provider/shell/pages/API/state/business behavior.
 
-Test only shell/runtime behavior and safe-area integration.
+- [ ] **Step 1: Strengthen architecture tests first.**
 
-- [ ] **Step 2: Implement the Telegram facade.**
+Add a RED fixture proving creation of `apps/telegram/src/**` or another Telegram product source owner is rejected while the current legacy files are still present only for the migration task.
 
-No Telegram auth validation yet; no bot token; no account-linking endpoint.
+- [ ] **Step 2: Move the existing runtime mechanics without behavior redesign.**
 
-- [ ] **Step 3: Verify Web and Telegram consume the same shared shell/i18n/theme packages.**
+Move the current lifecycle, viewport, safe-area, cleanup, and runtime snapshot behavior into `apps/web/src/telegram/runtime.ts`. Do not invent auth, routing, or product features in this move.
 
-- [ ] **Step 4: Run build/typecheck/tests and commit.**
+- [ ] **Step 3: Repoint focused Telegram runtime tests to the canonical owner and prove behavioral parity.**
+
+Expected: all existing runtime assertions remain GREEN against the moved implementation.
+
+- [ ] **Step 4: Make `apps/telegram` facade-only or remove source ownership.**
+
+Only after replacement proof, remove the superseded `apps/telegram/src` owner. Do not keep duplicate runtime implementations "for safety."
+
+- [ ] **Step 5: Run architecture check, focused Telegram tests, typecheck/build, then the repository gate.**
+
+- [ ] **Step 6: Update progress/docs and commit.**
 
 Suggested commit:
+
 ```text
-feat: add KRISTOU Telegram runtime facade
+refactor: converge Telegram runtime on canonical web frontend
 ```
 
 ---
@@ -444,6 +497,7 @@ feat: add KRISTOU Telegram runtime facade
 ### Task 6: Create PostgreSQL/Prisma foundation and canonical identity/audit/outbox schema
 
 **Files:**
+
 - Create: `packages/database/package.json`
 - Create: `packages/database/tsconfig.json`
 - Create: `packages/database/src/index.ts`
@@ -455,6 +509,7 @@ feat: add KRISTOU Telegram runtime facade
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces canonical persistence for only foundation entities:
   - `User`
   - `WebCredential`
@@ -468,6 +523,7 @@ feat: add KRISTOU Telegram runtime facade
 - [ ] **Step 1: Write real disposable-PostgreSQL integration tests for foundation invariants.**
 
 At minimum:
+
 - one Telegram identity belongs to at most one User;
 - one Web credential login identifier maps unambiguously according to chosen auth identifier policy;
 - raw session token is not stored;
@@ -494,6 +550,7 @@ Expected: PASS.
 - [ ] **Step 5: Reconcile canonical-model docs, update progress, and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU foundation persistence
 ```
@@ -503,6 +560,7 @@ feat: add KRISTOU foundation persistence
 ### Task 7: Add authentication primitives and session security
 
 **Files:**
+
 - Create: `packages/auth/package.json`
 - Create: `packages/auth/tsconfig.json`
 - Create: `packages/auth/src/index.ts`
@@ -515,6 +573,7 @@ feat: add KRISTOU foundation persistence
 - Modify: `progress.md`
 
 **Interfaces:**
+
 - Produces:
   - `hashPassword(password): Promise<string>`
   - `verifyPassword(hash, password): Promise<boolean>`
@@ -537,6 +596,7 @@ Tests use synthetic/test secrets only. No real Telegram token is needed.
 - [ ] **Step 5: Run auth tests/typecheck/security checks and commit.**
 
 Suggested commit:
+
 ```text
 feat: add KRISTOU auth primitives
 ```
@@ -546,19 +606,22 @@ feat: add KRISTOU auth primitives
 ### Task 8: Establish CI, security baseline, and full local foundation proof
 
 **Files:**
-- Create: `.github/workflows/ci.yml`
+
+- Create or update: `.github/workflows/foundation-ci.yml`
 - Create or modify: security/architecture test fixtures as needed
 - Modify: `README.md`
 - Modify: `progress.md`
 - Modify: `docs/LIVING_BUILD_PLAN.md` only if actual execution commands differ from the documented discipline
 
 **Interfaces:**
+
 - CI is read-only verification.
-- Produces the required local/CI gate before infrastructure creation.
+- Produces the required exact-source local/CI gate before deployment promotion or integration reconciliation.
 
 - [ ] **Step 1: Configure CI to run on pushes/PRs without modifying repository files.**
 
 Required:
+
 ```text
 npm ci
 npm run db:generate
@@ -584,6 +647,7 @@ If a secret scanner is introduced, pin/version its invocation and make CI read-o
 - [ ] **Step 3: Add a build-output secret-leak assertion.**
 
 Fail if Web/Telegram bundle text contains names/values of private variables such as:
+
 - `TELEGRAM_BOT_TOKEN`
 - `DATABASE_URL`
 - session pepper
@@ -600,59 +664,65 @@ Expected: all green.
 
 - [ ] **Step 5: Record exact SHA and proof in `progress.md`.**
 
-This successful gate unlocks **Task 9: staging infrastructure creation**.
+This successful gate unlocks **Task 9: Railway deployment verification / integration reconciliation**.
 
 - [ ] **Step 6: Commit.**
 
 Suggested commit:
+
 ```text
 ci: enforce KRISTOU foundation gates
 ```
 
 ---
 
-### Task 9: STAGING INFRASTRUCTURE GATE — create Railway and Cloudflare projects
+### Task 9: RAILWAY DEPLOYMENT VERIFICATION / INTEGRATION RECONCILIATION GATE
 
-**This is the point at which the product owner should create/authorize Railway and Cloudflare resources. Do not create them earlier.**
+**Current-state note:** Railway resources already exist and currently serve the verified KRISTOU candidate. Do not recreate or mutate them merely because the original plan described this work as future infrastructure creation.
 
-**Precondition:** Task 8 is green locally and in CI at an exact commit SHA.
+**Precondition:** Task 8 / the exact source candidate is green in Foundation CI.
 
-**Railway target:**
-- one KRISTOU staging project/environment;
-- API service from `apps/api`;
-- Worker service from `apps/worker`;
+**Verified Railway candidate topology to preserve until explicitly changed:**
+
+- `web-candidate` — public Web frontend;
+- `api-candidate` — API;
 - PostgreSQL;
 - Redis/Valkey;
-- staging-only environment variables;
-- health checks wired to the implemented health contracts.
+- Web source branch `deploy-candidate`;
+- Web build command `npm run build:web`.
 
-**Cloudflare target:**
-- KRISTOU Web frontend/edge project targeting the exact Web build;
-- staging/preview environment first;
-- public API base URL points only to Railway staging API;
-- optional Workers/R2/AI resources are **not** created unless the current implementation slice actually needs them.
+Cloudflare is excluded from this gate. It is later AI/edge scope, not current frontend hosting.
 
-**Files (only after resources exist):**
-- Modify/create deployment configuration actually required by the chosen providers
+**Files:**
+
+- Modify deployment configuration only if fresh Railway inspection proves the current task actually requires a source-controlled change
 - Modify: `.env.example` only if real variable names changed
 - Modify: `README.md`
 - Modify: `progress.md`
 
-- [ ] **Step 1: Stop and ask the owner to create/authorize the Railway staging project and Cloudflare frontend project.**
+- [ ] **Step 1: Inspect Railway before any mutation.**
 
-At this exact point I will tell you: **“Create Railway and Cloudflare now.”**
+Record the exact project/environment, service IDs/names, source branch, deployment SHA, build/start commands, healthcheck paths, public domains, and variable **names only**.
 
-- [ ] **Step 2: Wire staging environment variables without real values entering Git.**
+- [ ] **Step 2: Prove the deployed source lineage against Git.**
 
-- [ ] **Step 3: Deploy exact SHA to staging.**
+Verify the exact Railway deployment commit exists in `funmarket/Kristou` and compare it to the intended integration branch. Do not assume `phase-0-foundation` is current merely because of its name.
 
-- [ ] **Step 4: Prove API liveness/readiness and Worker readiness from the deployed services.**
+- [ ] **Step 3: Prove the Web build path.**
 
-- [ ] **Step 5: Prove Cloudflare preview serves the exact Web build and points to the staging API.**
+Verify Railway uses the repository's dependency-safe `npm run build:web` command and that the deployed Web assets respond successfully from the Railway domain.
 
-- [ ] **Step 6: Record exact URLs, deployed SHA, environment status, and remaining gaps in `progress.md`.**
+- [ ] **Step 4: Prove API runtime health.**
 
-Production resources/aliases remain out of scope.
+Verify the deployed API health contract from Railway runtime evidence. Do not claim readiness if only liveness is proven.
+
+- [ ] **Step 5: Verify the integration branch contains the verified deployed/source lineage.**
+
+If it does not, reconcile it through a reviewed PR that preserves the exact working build/runtime changes. If reconciliation has already landed, record the exact merge/provenance and do not create a duplicate reconciliation PR.
+
+- [ ] **Step 6: Record exact URLs, deployed SHA, CI proof, integration state, and remaining gaps in `progress.md`.**
+
+No Cloudflare frontend deployment is required for Phase 0 completion.
 
 ---
 
@@ -661,10 +731,11 @@ Production resources/aliases remain out of scope.
 **This is the first point at which a temporary Telegram bot token is needed.**
 
 **Preconditions:**
-- Task 9 staging API/Web are reachable through stable staging URLs;
+
+- Task 9 Railway API/Web candidate is reachable through stable approved URLs;
 - private env handling is proven;
 - `packages/auth` Telegram initData validator exists and is tested;
-- Telegram runtime facade builds;
+- the canonical Web-owned Telegram host/runtime adapter builds and passes focused tests;
 - account-link implementation plan has been written and approved.
 
 - [ ] **Step 1: Ask the owner to create a separate temporary KRISTOU development bot with BotFather.**
@@ -674,6 +745,7 @@ Do not use the future production bot.
 - [ ] **Step 2: Store the token only in Railway/staging private secrets as `TELEGRAM_BOT_TOKEN`.**
 
 Never paste the token into:
+
 - GitHub files;
 - Web/Telegram frontend environment variables;
 - screenshots;
@@ -681,7 +753,7 @@ Never paste the token into:
 - test fixtures;
 - chat-visible source snippets.
 
-- [ ] **Step 3: Configure the development Mini App URL to the approved staging/preview URL.**
+- [ ] **Step 3: Configure the development Mini App URL to the approved Railway-hosted canonical Web entry/route.**
 
 - [ ] **Step 4: Begin the separate Identity/Telegram-linking implementation plan.**
 
@@ -696,7 +768,7 @@ The token is not a signal to implement all Telegram features at once.
 Phase 0 Foundation is complete only when:
 
 - npm workspace + lockfile are committed;
-- API, Web, Telegram facade, and Worker build;
+- API, canonical Web frontend, Telegram host adapter/facade boundary, and Worker build;
 - config fails closed correctly in production mode;
 - PostgreSQL foundation schema/migration is proven on disposable Postgres;
 - canonical identity primitives exist without duplicate Web/Telegram Users;
@@ -705,7 +777,7 @@ Phase 0 Foundation is complete only when:
 - Light default, pitch-black dark, AR/FR/EN, RTL, and transparent scrollbar behavior are verified;
 - architecture checks pass;
 - CI is green and read-only;
-- staging Railway + Cloudflare proof exists at an exact SHA;
+- Railway Web/API deployment proof exists at an exact SHA and matches the source candidate;
 - governing docs and `progress.md` match the implementation.
 
 ## Self-review
@@ -715,4 +787,4 @@ Phase 0 Foundation is complete only when:
 - **No speculative business schema:** Class, Pickup, Enrollment, Parent Notes, Messaging, Food Menu, Directory, Broadcasts, and AI tables are not created here.
 - **Review Focus covered:** architecture imports (Task 1), env failures/client leakage (Tasks 2/8), theme/i18n/scrollbars (Task 4), canonical identity (Tasks 6/7), secret leakage (Tasks 8–10).
 - **Owner decision gate:** Task 6 explicitly stops before schema creation if Web login identifier policy remains unresolved.
-- **Infrastructure timing:** Railway/Cloudflare are not required until Task 9; temporary Telegram token is not required until Task 10.
+- **Infrastructure timing:** Railway is already the current candidate host and Task 9 verifies/reconciles it rather than recreating it. Cloudflare is deferred to later AI/edge work. A temporary Telegram token is not required until Task 10.
