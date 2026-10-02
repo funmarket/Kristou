@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const appEnvironmentSchema = z.enum(["local", "staging", "production"]);
 const urlSchema = z.string().url();
+const positiveIntegerSchema = z.coerce.number().int().positive();
 
 const serverBaseSchema = z.object({
   APP_ENV: appEnvironmentSchema,
@@ -13,6 +14,9 @@ const apiEnvironmentSchema = serverBaseSchema.extend({
   WEB_ORIGIN: urlSchema,
   SESSION_COOKIE_NAME: z.string().min(1),
   SESSION_TOKEN_PEPPER: z.string().min(32),
+  SESSION_TTL_SECONDS: positiveIntegerSchema,
+  TELEGRAM_BOT_TOKEN: z.string().min(1),
+  TELEGRAM_INIT_DATA_MAX_AGE_SECONDS: positiveIntegerSchema,
 });
 
 const workerEnvironmentSchema = serverBaseSchema;
@@ -31,6 +35,9 @@ export interface ApiConfig {
   webOrigin: string;
   sessionCookieName: string;
   sessionTokenPepper: string;
+  sessionTtlSeconds: number;
+  telegramBotToken: string;
+  telegramInitDataMaxAgeSeconds: number;
 }
 
 export interface WorkerConfig {
@@ -55,6 +62,9 @@ export function loadApiConfig(env: EnvironmentInput): ApiConfig {
     webOrigin: parsed.WEB_ORIGIN,
     sessionCookieName: parsed.SESSION_COOKIE_NAME,
     sessionTokenPepper: parsed.SESSION_TOKEN_PEPPER,
+    sessionTtlSeconds: parsed.SESSION_TTL_SECONDS,
+    telegramBotToken: parsed.TELEGRAM_BOT_TOKEN,
+    telegramInitDataMaxAgeSeconds: parsed.TELEGRAM_INIT_DATA_MAX_AGE_SECONDS,
   };
 }
 

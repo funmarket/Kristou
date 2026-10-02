@@ -2,13 +2,17 @@ import type { Server } from "node:http";
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
 import { loadApiConfig } from "@kristou/config";
+import { getDatabaseClient } from "@kristou/database";
 import { createApiApp } from "./app.js";
 import type { ReadinessProbe } from "../http/health.js";
+import type { IdentityRepository } from "../modules/identity/application/auth-service.js";
+import { PrismaIdentityRepository } from "../modules/identity/infrastructure/prisma-identity-repository.js";
 
 export interface StartApiServerOptions {
   host?: string;
   port?: number;
   readiness?: ReadinessProbe;
+  identityRepository?: IdentityRepository;
 }
 
 const defaultReadiness: ReadinessProbe = {
@@ -29,9 +33,12 @@ export function startApiServer(
   options: StartApiServerOptions = {},
 ): Server {
   const config = loadApiConfig(env);
+  const identityRepository =
+    options.identityRepository ?? new PrismaIdentityRepository(getDatabaseClient());
   const app = createApiApp({
     config,
     readiness: options.readiness ?? defaultReadiness,
+    identityRepository,
   });
 
   const host = options.host ?? "0.0.0.0";

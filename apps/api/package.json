@@ -13,7 +13,9 @@
     "@kristou/config": "0.1.0",
     "cors": "2.8.5",
     "express": "5.1.0",
-    "helmet": "8.3.0"
+    "helmet": "8.3.0",
+    "@kristou/auth": "0.1.0",
+    "@kristou/database": "0.1.0"
   },
   "devDependencies": {
     "@types/cors": "2.8.19",

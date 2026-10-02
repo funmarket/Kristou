@@ -13,6 +13,9 @@ const localServerEnv = {
   WEB_ORIGIN: "http://localhost:5173",
   SESSION_COOKIE_NAME: "kristou_session",
   SESSION_TOKEN_PEPPER: "0123456789abcdef0123456789abcdef",
+  SESSION_TTL_SECONDS: "3600",
+  TELEGRAM_BOT_TOKEN: "test-telegram-bot-token",
+  TELEGRAM_INIT_DATA_MAX_AGE_SECONDS: "300",
 };
 
 const productionServerEnv = {
@@ -22,12 +25,23 @@ const productionServerEnv = {
 };
 
 test("server loaders accept explicit local configuration", () => {
-  assert.equal(loadApiConfig(localServerEnv).appEnv, "local");
+  const api = loadApiConfig(localServerEnv);
+  assert.equal(api.appEnv, "local");
+  assert.equal(api.sessionTtlSeconds, 3600);
+  assert.equal(api.telegramInitDataMaxAgeSeconds, 300);
   assert.equal(loadWorkerConfig(localServerEnv).appEnv, "local");
 });
 
 test("production api config rejects missing durable and security values", () => {
-  for (const key of ["DATABASE_URL", "REDIS_URL", "WEB_ORIGIN", "SESSION_TOKEN_PEPPER"]) {
+  for (const key of [
+    "DATABASE_URL",
+    "REDIS_URL",
+    "WEB_ORIGIN",
+    "SESSION_TOKEN_PEPPER",
+    "SESSION_TTL_SECONDS",
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_INIT_DATA_MAX_AGE_SECONDS",
+  ]) {
     const env = { ...productionServerEnv };
     delete env[key as keyof typeof env];
     assert.throws(() => loadApiConfig(env), { name: "ZodError" });
