@@ -32,13 +32,33 @@ Dedicated ADR files may be added under `docs/adr/` when a decision needs deeper 
 
 ---
 
+## ADR-013 — One canonical product frontend; Telegram is a delivery/runtime context
+
+**Status:** Accepted.
+
+**Context:** KRISTOU requires Browser and Telegram access without allowing two product implementations, two route trees, two state/API layers, or two business authorities.
+
+**Decision:** KRISTOU has one canonical React/TypeScript product frontend. `apps/web` owns the canonical application entry, route authority, shell, and runtime composition for both normal Browser and Telegram WebView delivery contexts. Shared product feature UI/state/API integration belongs in `packages/frontend`; domain-neutral presentation belongs in `packages/ui`. `apps/telegram`, if retained for hosting or compatibility, is facade-only and must not own a `src/` product tree, router, provider, shell, feature pages, product state, domain API clients, assets, or business behavior. Telegram-specific code is limited to host/runtime mechanics such as validated `initData` transport, lifecycle, viewport/safe-area, BackButton, haptics/native integrations, and compatible entry/deep-link behavior.
+
+Both delivery contexts call the same canonical API/application/domain authorities and resolve to the same canonical `User`. Authentication transports may differ; product ownership does not.
+
+**Reason:** Preserve one product authority, prevent divergent Web/Telegram behavior, simplify testing and deployment, and keep platform differences at the transport/runtime edge rather than in product features.
+
+**Consequences:** Existing Telegram host mechanics must be migrated into the canonical Web runtime adapter boundary and the superseded Telegram source owner removed only after replacement behavior is proven. Architecture checks must reject reintroduction of a second Telegram product source tree.
+
+**Supersedes / Superseded by:** Supersedes ADR-003.
+
+---
+
 ## ADR-003 — Planned runtime split is API, Web, Telegram, Worker
 
-**Decision:** KRISTOU plans four application runtimes: API, Web, Telegram Mini App facade, and Worker.
+**Status:** Superseded by ADR-013.
 
-**Reason:** Separate browser/Telegram runtime concerns from business/API authority and asynchronous processing.
+**Historical decision:** KRISTOU originally planned four application runtimes: API, Web, Telegram Mini App facade, and Worker.
 
-**Current-state note:** This is architecture direction only. These runtimes are not yet implemented.
+**Why superseded:** The wording allowed Telegram to become an independently compiled source-owning application workspace, which conflicts with the locked one-product architecture. Runtime/host concerns may differ, but Browser and Telegram WebView must not own separate product frontends.
+
+**Superseded by:** ADR-013.
 
 ---
 
