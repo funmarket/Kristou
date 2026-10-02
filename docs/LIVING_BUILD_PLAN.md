@@ -174,6 +174,27 @@ A user opening one product area should not trigger unrelated domain queries, loc
 
 ---
 
+## 3A. One-product topology and deployment gate
+
+Before any task that touches frontend entrypoints, routing, authentication transport, Telegram runtime, API transport wiring, build commands, or deployment entry behavior, verify all of the following from current source/runtime evidence:
+
+1. `apps/web` remains the target canonical KRISTOU product frontend owner;
+2. Browser and Telegram WebView are intended to enter the same canonical React/TypeScript product;
+3. current `apps/telegram/src` ownership is treated as migration debt, not permission to add a second product implementation;
+4. no second Telegram router/provider/shell, duplicate feature UI, duplicate product state, duplicate domain API client, or duplicate asset authority is introduced;
+5. Telegram-specific behavior is limited to host/runtime mechanics and authentication transport adaptation;
+6. both delivery contexts converge on the same API/application/domain authority and canonical User;
+7. replacing platform ownership follows move -> prove -> remove, never copy -> hide -> keep both;
+8. the build/deployment path being changed is the one that actually serves the current application;
+9. Railway is the current verified candidate hosting authority unless fresh deployment evidence proves otherwise;
+10. Cloudflare is future AI/edge scope unless the product owner explicitly changes that decision.
+
+If any item is unknown or contradicted, stop before mutation.
+
+A task may not use "same backend" as proof of one-product architecture while maintaining separate frontend ownership. A failing check from a non-authoritative hosting path must not be treated as proof that the live application build is broken.
+
+---
+
 ## 4. Parallel work rules
 
 Multiple agents may work in parallel; interference is not allowed.
@@ -461,8 +482,21 @@ KRISTOU's own approved requirements and current source always remain authoritati
 
 ## 14. Current foundation note
 
-At documentation-bootstrap time, KRISTOU has no verified application runtime, package manager, database schema, migrations, API, frontend, worker, or deployment.
+The documentation-bootstrap state is historical and must not be treated as current.
 
-Do not convert planned architecture into "implemented" status until source evidence exists.
+Verified current recovery baseline:
 
-Use `progress.md` for current implementation evidence as the project grows.
+- deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`;
+- source-identical implementation head: `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
+- stale integration branch awaiting reconciliation: `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f`;
+- Foundation CI run `36922103675` succeeded on exact source head `2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
+- Railway `web-candidate` and `api-candidate` deployments from the deployed lineage are successful;
+- the repository has implemented API/Web/Telegram/Worker workspaces, shared packages, foundation Prisma schema/migration, build graph, tests, and CI.
+
+Known recovery debt remains:
+
+- `apps/telegram/src` still owns Telegram runtime mechanics instead of the target canonical Web runtime boundary;
+- architecture checks do not yet forbid reintroducing a second Telegram product source owner;
+- `phase-0-foundation` has not yet absorbed the verified build-graph/deployed lineage.
+
+Use `progress.md` for exact current implementation/deployment evidence and re-verify mutable branch/runtime facts before each consequential task.
