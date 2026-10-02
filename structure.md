@@ -50,14 +50,14 @@ Documentation is part of implementation. If architecture or ownership changes, t
 
 ## 2. Repository topology
 
-Planned clean monorepo foundation:
+Canonical monorepo direction:
 
 ```text
 Kristou/
   apps/
     api/
     web/
-    telegram/
+    telegram/   # optional compatibility/deployment facade only
     worker/
 
   packages/
@@ -90,7 +90,7 @@ Kristou/
   README.md
 ```
 
-This topology is a target architecture. The repository is currently documentation-only. Do not claim apps/packages exist until they are created and verified.
+The exact live topology must be verified before every architecture-sensitive task. Current source already contains Phase 0 apps/packages; their presence is current-state evidence, not permission to create additional product owners.
 
 Do not add a top-level app/package merely to avoid an existing ownership boundary.
 
@@ -115,27 +115,34 @@ Business policy must not live directly in HTTP handlers.
 
 ### `apps/web`
 
-Owns:
+Owns the canonical KRISTOU product frontend for both normal Browser and Telegram WebView delivery contexts:
 
-- canonical browser application entry;
-- browser routing;
+- canonical React application entry;
+- canonical route authority;
+- canonical responsive application shell;
+- browser runtime composition;
+- Telegram host/runtime adapters;
 - Web authentication screens;
-- responsive application shell;
-- Web runtime behavior.
+- runtime-specific transport configuration.
 
 It consumes shared feature UI and contracts where appropriate but does not own backend business rules.
 
+Telegram host mechanics may live under an explicit adapter boundary inside the canonical Web application, for example lifecycle, viewport/safe-area, BackButton, haptics/native integrations, and validated `initData` transport. These mechanics must never become a second product frontend.
+
 ### `apps/telegram`
 
-Owns the Telegram Mini App runtime facade:
+May exist only as a compatibility/deployment facade when required by hosting or historical integration.
 
-- Telegram `initData` handoff;
-- viewport/safe-area behavior;
-- Telegram lifecycle;
-- native Telegram navigation/haptics where used;
-- Telegram-specific shell integration.
+It must not own:
 
-It must not create a second KRISTOU product state or Telegram-only business database.
+- a `src/` product tree;
+- a second router, provider, or application shell;
+- feature pages/components;
+- product state or domain API clients;
+- product assets or business behavior;
+- Telegram-only durable records.
+
+If a Telegram-specific entry is required, it must enter/delegate to the canonical `apps/web` product frontend rather than implement a parallel application.
 
 ### `apps/worker`
 
@@ -362,16 +369,24 @@ Product domains decide whether media is allowed, private/public, and attached to
 
 ## 8. Web and Telegram boundary
 
-Web and Telegram have separate authentication transports but converge on the same backend identity and product state.
+Web and Telegram have separate authentication transports but converge on the same canonical frontend, backend identity, API, domain behavior, and product state.
 
 ```text
-Web session ---------\
-                     -> canonical User -> same API/domain state
-Telegram initData ---/
+Normal Browser -----------------\
+Web session                      \
+                                  -> canonical apps/web frontend
+Telegram WebView ---------------/      -> shared @kristou/frontend
+validated initData transport --------> same API/domain state
+                                       -> canonical User
 ```
+
+There is one feature implementation per product capability. Telegram work adapts or verifies host delivery; it does not recreate the feature.
 
 No Telegram-specific copies of:
 
+- route trees or application shells;
+- feature pages/components;
+- API clients or product state stores;
 - children;
 - classes;
 - Parent Notes;
@@ -431,9 +446,12 @@ PostgreSQL stores canonical descriptors/ownership references.
 
 ## 10. Frontend architecture rules
 
-- shared Web/Telegram feature UI belongs in `packages/frontend` when genuinely reusable;
-- runtime shells remain in `apps/web` and `apps/telegram`;
-- design tokens/platform-neutral components belong in `packages/ui`;
+- KRISTOU has one canonical React/TypeScript product frontend;
+- `apps/web` owns the canonical entry, router, shell, and runtime composition for Browser + Telegram WebView;
+- shared product feature UI/state/API integration belongs in `packages/frontend`, split by owning feature/domain;
+- `packages/ui` owns platform-neutral components, design tokens, themes, accessibility primitives, and governed shared assets;
+- `apps/telegram`, if present, is facade-only and must not contain a second product source tree;
+- Telegram host-specific mechanics belong behind adapters consumed by the canonical Web application, not in duplicated feature UI;
 - one feature must not require loading unrelated domains;
 - server state and authorization must not be replaced by frontend guesses;
 - Arabic RTL, French LTR, and English LTR are foundational;
