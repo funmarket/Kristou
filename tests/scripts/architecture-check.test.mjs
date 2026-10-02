@@ -14,9 +14,7 @@ async function withFixture(extraFiles, callback) {
   const root = await mkdtemp(path.join(os.tmpdir(), "kristou-architecture-check-"));
   try {
     await mkdir(path.join(root, "scripts"), { recursive: true });
-    await mkdir(path.join(root, "apps/telegram/src"), { recursive: true });
     await writeFile(path.join(root, "scripts/architecture-check.mjs"), checkerSource);
-    await writeFile(path.join(root, "apps/telegram/src/index.ts"), "export {};\n");
 
     for (const [relative, content] of Object.entries(extraFiles)) {
       const target = path.join(root, relative);
@@ -37,7 +35,7 @@ function runChecker(root) {
   });
 }
 
-test("allows only the exact temporary Telegram migration-debt source files", async () => {
+test("allows a repository with no Telegram product source owner", async () => {
   await withFixture({}, async (root) => {
     const result = runChecker(root);
     assert.equal(result.status, 0, `stdout=${result.stdout} stderr=${result.stderr}`);
@@ -47,7 +45,7 @@ test("allows only the exact temporary Telegram migration-debt source files", asy
 test("rejects a new Telegram product source owner", async () => {
   await withFixture(
     {
-      "apps/telegram/src/runtime.ts": "export const runtime = true;\n",
+      "apps/telegram/src/index.ts": "export {};\n",
     },
     async (root) => {
       const result = runChecker(root);
@@ -58,7 +56,7 @@ test("rejects a new Telegram product source owner", async () => {
       );
       assert.match(
         result.stderr,
-        /apps\/telegram\/src\/runtime\.ts: Telegram product source must live in the canonical Web frontend/,
+        /apps\/telegram\/src\/index\.ts: Telegram product source must live in the canonical Web frontend/,
       );
     },
   );

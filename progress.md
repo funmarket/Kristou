@@ -265,3 +265,14 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - At the time of this recovery snapshot, `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f` was stale relative to the verified deployed/source lineage; this is historical pre-reconciliation evidence, not current branch truth.
 - The deployed source still contains `apps/telegram/src/runtime.ts`. This is current implementation evidence, not target architecture. ADR-013 and the revised Phase 0 plan require one canonical product frontend and a later move -> prove -> remove migration of Telegram host mechanics into the canonical Web runtime boundary.
 - No Railway infrastructure mutation was performed by this documentation recovery task.
+
+### Recovery R4 — Telegram workspace/source ownership cleanup
+
+- Starting integration HEAD: `phase-0-foundation@e9f2604fb0b07b826381985c35bbed974a99e277`.
+- R3 / PR #13 was already merged at that exact starting SHA.
+- Fresh repository inspection found the remaining `apps/telegram` workspace contained only `package.json`, `tsconfig.json`, and `src/index.ts`; the source file only re-exported `KristouShell` and `DEFAULT_THEME` and owned no unique runtime/product behavior.
+- Full repository reference inspection found no current package/source consumer of `@kristou/telegram`; the root build/typecheck included it only because the workspace manifest existed.
+- Fresh Railway inspection of the KRISTOU project found current services build with `npm run build:web` or `npm run build` and start `@kristou/api`; no service referenced `@kristou/telegram`, `apps/telegram`, or a Telegram workspace root.
+- R4 decision: **WORKSPACE REMOVED**. The obsolete `apps/telegram` workspace/source/build ownership is removed; canonical Telegram host runtime remains at `apps/web/src/telegram/runtime.ts`.
+- Architecture regression coverage now requires every `apps/telegram/src/**` product source owner to fail; the temporary R2/R3 `src/index.ts` exception is removed.
+- Repository-wide build-graph redesign remains a separate R5 packet; Browser/Telegram runtime-context integration remains R6.

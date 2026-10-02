@@ -5,7 +5,6 @@ const root = process.cwd();
 const ignored = new Set(["node_modules", "dist", "coverage", ".git", ".superpowers"]);
 const sourceExtensions = new Set([".ts", ".tsx", ".js", ".mjs"]);
 const violations = [];
-const allowedTelegramSourceFiles = new Set(["apps/telegram/src/index.ts"]);
 const importPattern = /\b(?:import|export)\b\s+(?:[\s\S]*?\bfrom\s+)?["']([^"']+)["']/g;
 
 async function walk(directory) {
@@ -59,9 +58,9 @@ for (const file of await walk(root)) {
   const source = await readFile(file, "utf8");
   const imports = importSpecifiers(source);
 
-  if (normalized.startsWith("apps/telegram/src/") && !allowedTelegramSourceFiles.has(normalized)) {
+  if (normalized.startsWith("apps/telegram/src/")) {
     violations.push(
-      `${normalized}: Telegram product source must live in the canonical Web frontend; only temporary migration-debt files are allowed under apps/telegram/src`,
+      `${normalized}: Telegram product source must live in the canonical Web frontend; apps/telegram/src is not an allowed product source owner`,
     );
   }
 
