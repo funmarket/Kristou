@@ -5,10 +5,7 @@ const root = process.cwd();
 const ignored = new Set(["node_modules", "dist", "coverage", ".git", ".superpowers"]);
 const sourceExtensions = new Set([".ts", ".tsx", ".js", ".mjs"]);
 const violations = [];
-const allowedTelegramSourceFiles = new Set([
-  "apps/telegram/src/index.ts",
-  "apps/telegram/src/runtime.ts",
-]);
+const allowedTelegramSourceFiles = new Set(["apps/telegram/src/index.ts"]);
 const importPattern = /\b(?:import|export)\b\s+(?:[\s\S]*?\bfrom\s+)?["']([^"']+)["']/g;
 
 async function walk(directory) {
