@@ -266,7 +266,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - The deployed source still contains `apps/telegram/src/runtime.ts`. This is current implementation evidence, not target architecture. ADR-013 and the revised Phase 0 plan require one canonical product frontend and a later move -> prove -> remove migration of Telegram host mechanics into the canonical Web runtime boundary.
 - No Railway infrastructure mutation was performed by this documentation recovery task.
 
-
 ### Recovery R4 — Telegram workspace/source ownership cleanup
 
 - Starting integration HEAD: `phase-0-foundation@e9f2604fb0b07b826381985c35bbed974a99e277`.
