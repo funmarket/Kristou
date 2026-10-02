@@ -10,19 +10,21 @@
 
 **Spec:** `requirements.md`, `structure.md`, `docs/CANONICAL_MODEL.md`, `docs/DECISIONS.md`, and the owner-approved visual/template package from the current KRISTOU design checkpoint. The attached `ggd.png` logo is the official source asset and must be copied unchanged into the repository when Task 4 executes.
 
-## Current recovery baseline
+## Recovery snapshot and supersession note
 
-This plan began before the Phase 0 foundation was implemented. Current source/runtime evidence now overrides old future-tense execution assumptions:
+This plan began before the Phase 0 foundation was implemented. The following is a dated recovery snapshot from 2026-10-02, before integration reconciliation:
 
 - deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`;
 - source-identical implementation head: `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
 - Foundation CI run `36922103675` succeeded on exact source head `2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
-- Railway `web-candidate` and `api-candidate` deployments from `deploy-candidate` are successful;
-- `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f` is stale and requires reconciliation;
+- Railway `web-candidate` and `api-candidate` deployments from `deploy-candidate` were successful;
+- pre-reconciliation `phase-0-foundation` was `0ac85b23c6e0f88bae8293496c890ca681c4915f`;
 - current `apps/telegram/src` source ownership is recovery debt and is superseded by the one-product frontend architecture in ADR-013;
-- Cloudflare is not current frontend hosting authority and is deferred to later AI/edge work.
+- Cloudflare frontend/repository build integration is not part of the current hosting path; Cloudflare remains deferred to later AI/edge work if explicitly introduced.
 
-Tasks below retain the original Phase 0 scope, but any step contradicted by this verified baseline is superseded by the corrected wording in this revision.
+The SHAs above are historical evidence, not permanent current-state authority. Re-read the exact integration HEAD and Railway deployment state before consequential work.
+
+Tasks below retain the original Phase 0 scope, but any step contradicted by the current governing architecture or fresh runtime evidence is superseded by the corrected wording in this revision.
 
 ## Global Constraints
 
@@ -714,9 +716,9 @@ Verify Railway uses the repository's dependency-safe `npm run build:web` command
 
 Verify the deployed API health contract from Railway runtime evidence. Do not claim readiness if only liveness is proven.
 
-- [ ] **Step 5: Reconcile the verified deployed/source lineage into the integration branch through a reviewed PR.**
+- [ ] **Step 5: Verify the integration branch contains the verified deployed/source lineage.**
 
-The PR must preserve the exact working build/runtime changes; no patching from a stale integration snapshot.
+If it does not, reconcile it through a reviewed PR that preserves the exact working build/runtime changes. If reconciliation has already landed, record the exact merge/provenance and do not create a duplicate reconciliation PR.
 
 - [ ] **Step 6: Record exact URLs, deployed SHA, CI proof, integration state, and remaining gaps in `progress.md`.**
 

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - foundation/build-graph-closure
+      - phase-0-foundation
   pull_request:
     branches:
       - phase-0-foundation

@@ -4,19 +4,19 @@ Status: **CURRENT IMPLEMENTATION EVIDENCE ONLY**
 
 This file records verified implementation state. It must not become a second requirements, architecture, or decision document.
 
-## Current verified state
+## Verified recovery snapshot — 2026-10-02 before PR #11 merge
 
-The current deployed/source lineage is ahead of the long-lived Phase 0 integration branch and is being reconciled before new feature work continues.
+This section is a dated pre-merge snapshot. It remains historical evidence after reconciliation and must not be treated as a substitute for re-reading the current integration branch and Railway deployment state.
 
-Freshly verified repository state:
+At this snapshot:
 
 - deployed Railway source: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`;
 - source-identical implementation head: `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
-- current stale integration head: `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f`;
-- the final two `deploy-candidate` commits contain no file diff relative to `foundation/build-graph-closure@2e38c4f...`;
-- no open pull requests existed when the current recovery branch was created.
+- pre-reconciliation integration head: `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f`;
+- the final two `deploy-candidate` commits contained no file diff relative to `foundation/build-graph-closure@2e38c4f...`;
+- no open pull requests existed when the recovery branch was originally created.
 
-Verified source/CI evidence on the deployed lineage includes:
+Verified source/CI evidence on that deployed lineage included:
 
 - root npm workspace/toolchain, dependency-aware workspace graph, architecture/preflight scripts, and `npm run build:web`;
 - API liveness/readiness foundation;
@@ -29,7 +29,7 @@ Verified source/CI evidence on the deployed lineage includes:
 - Foundation CI run `36922103675` — **SUCCESS** on exact source head `2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
 - the dependency-safe Web build contract: config -> ui -> frontend -> web.
 
-Verified Railway candidate deployment evidence:
+Verified Railway candidate deployment evidence at that snapshot:
 
 - project: KRISTOU, environment: production;
 - `web-candidate` latest deployment `c20235a8-a4b6-42f5-94f9-639576f3b318` — **SUCCESS**;
@@ -39,15 +39,12 @@ Verified Railway candidate deployment evidence:
 - live HTTP evidence showed `/`, generated JS/CSS, and the governed logo served successfully;
 - `api-candidate` latest deployment `03067730-69a4-47bf-8a22-5726e7331a57` — **SUCCESS**;
 - API Railway healthcheck `/health/live` succeeded;
-- PostgreSQL and Redis Railway services are running successfully.
+- PostgreSQL and Redis Railway services were running successfully.
 
-Cloudflare is **not** current frontend hosting authority. It remains later AI/edge scope unless explicitly changed by the product owner.
-
-Known recovery debt / unverified areas:
+Known unresolved recovery debt / unverified areas:
 
 - `apps/telegram/src` still owns Telegram runtime mechanics; target architecture moves those host mechanics under the canonical Web frontend and removes the superseded source owner only after parity proof;
 - the current architecture guard does not yet forbid reintroduction of a second Telegram product source tree;
-- `phase-0-foundation` has not yet absorbed the verified build-graph/deployed lineage;
 - PostgreSQL integration proof is still incomplete: the exact successful Foundation CI workflow generated/validated Prisma but did not run `npm run test:integration` against disposable PostgreSQL, so Task 6B must not be called runtime-GREEN;
 - authentication/session flows, Telegram `initData` validation/account linking, authorization, registration, product domains, notification delivery, object-storage runtime, and AI remain unimplemented or unverified as product capabilities.
 
@@ -265,6 +262,6 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 
 - Recovery inspection established that `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc` is the source used by the successful Railway Web/API candidate deployments.
 - `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b` has the same source tree as that deployed commit and has exact-head Foundation CI run `36922103675` — **SUCCESS**.
-- `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f` is therefore stale relative to the verified deployed/source lineage and must be reconciled before later feature slices continue.
+- At the time of this recovery snapshot, `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f` was stale relative to the verified deployed/source lineage; this is historical pre-reconciliation evidence, not current branch truth.
 - The deployed source still contains `apps/telegram/src/runtime.ts`. This is current implementation evidence, not target architecture. ADR-013 and the revised Phase 0 plan require one canonical product frontend and a later move -> prove -> remove migration of Telegram host mechanics into the canonical Web runtime boundary.
-- No Railway or Cloudflare infrastructure mutation was performed by this documentation recovery task.
+- No Railway infrastructure mutation was performed by this documentation recovery task.

@@ -480,23 +480,35 @@ KRISTOU's own approved requirements and current source always remain authoritati
 
 ---
 
-## 14. Current foundation note
+## 14. Foundation status and recovery evidence
 
 The documentation-bootstrap state is historical and must not be treated as current.
 
-Verified current recovery baseline:
+### Recovery snapshot — 2026-10-02 before integration reconciliation
+
+At this verified snapshot:
 
 - deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`;
 - source-identical implementation head: `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
-- stale integration branch awaiting reconciliation: `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f`;
+- pre-reconciliation integration head: `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f`;
 - Foundation CI run `36922103675` succeeded on exact source head `2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`;
-- Railway `web-candidate` and `api-candidate` deployments from the deployed lineage are successful;
-- the repository has implemented API/Web/Telegram/Worker workspaces, shared packages, foundation Prisma schema/migration, build graph, tests, and CI.
+- Railway `web-candidate` and `api-candidate` deployments from the deployed lineage were successful;
+- the repository had implemented API/Web/Telegram/Worker workspaces, shared packages, foundation Prisma schema/migration, build graph, tests, and CI.
+
+This snapshot is historical evidence. After reconciliation, do not use the SHAs above as current branch truth; re-read the exact integration HEAD and current Railway deployment evidence.
+
+### Durable current-state rule
+
+Before consequential work:
+
+- verify the exact current `phase-0-foundation` HEAD;
+- verify that accepted foundation/build/runtime work is present on that integration head;
+- use Railway as the current Web/API deployment authority unless the owner explicitly changes the hosting decision;
+- treat deployment branches as deployment evidence, not as a substitute for integration-branch authority.
 
 Known recovery debt remains:
 
 - `apps/telegram/src` still owns Telegram runtime mechanics instead of the target canonical Web runtime boundary;
-- architecture checks do not yet forbid reintroducing a second Telegram product source owner;
-- `phase-0-foundation` has not yet absorbed the verified build-graph/deployed lineage.
+- architecture checks do not yet forbid reintroducing a second Telegram product source owner.
 
-Use `progress.md` for exact current implementation/deployment evidence and re-verify mutable branch/runtime facts before each consequential task.
+Use `progress.md` for exact implementation/deployment evidence and re-verify mutable branch/runtime facts before each consequential task.

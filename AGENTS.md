@@ -152,15 +152,14 @@ Genuinely generic primitives may be shared, but shared code must never become a 
 
 KRISTOU uses an integration-branch workflow, but branch names are not authority by themselves. Fresh source/runtime inspection decides which commit is the valid starting state.
 
-Current recovery state:
+Integration branch discipline:
 
 - `main` is not the day-to-day implementation branch.
-- `phase-0-foundation@0ac85b23c6e0f88bae8293496c890ca681c4915f` is currently behind the verified deployed lineage.
-- Railway `web-candidate` and `api-candidate` are sourced from `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`.
-- `deploy-candidate@76ab188b...` has the same source tree as `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`; its final two commits are deployment-trigger commits with no file diff.
-- Until the recovery integration PR lands, do not start new implementation work from stale `phase-0-foundation`.
-- Recovery work branches from the freshly verified deployed/source lineage, preserves its proven build/runtime fixes, and targets `phase-0-foundation` for reconciliation.
-- After reconciliation, resume normal slice work from the newly verified integration HEAD.
+- `phase-0-foundation` is the long-lived Phase 0 integration branch after accepted recovery/reconciliation work lands.
+- Before branching a new implementation slice, verify the exact current `phase-0-foundation` HEAD and confirm it contains the most recently accepted foundation/build/runtime work.
+- Railway deployment branches/services are deployment evidence, not a substitute for integration-branch authority.
+- If a verified deployed/source lineage is ahead of `phase-0-foundation`, reconcile it through a reviewed PR before new feature work branches from the integration line.
+- After reconciliation, branch new work only from the newly verified integration HEAD.
 - Slice branches use focused names such as `foundation/<task>`, `feat/<domain-slice>`, or `fix/<issue>`.
 - `main` moves only through an explicit owner-approved release/foundation promotion.
 
@@ -174,7 +173,7 @@ Do not:
 - overwrite a non-fast-forward update;
 - modify unrelated files while "already in the area";
 - adopt another agent's task without authorization;
-- branch a new implementation slice from stale `main` or from a stale `phase-0-foundation` while a newer verified deployed/source lineage is awaiting reconciliation.
+- branch a new implementation slice from stale `main` or from an integration head known to be stale relative to accepted/deployed source lineage awaiting reconciliation.
 
 If HEAD changes after the initial snapshot:
 
@@ -207,9 +206,9 @@ Open PR work is in-flight, not current foundation truth.
 
 ### Deployment authority
 
-Current verified hosting for the KRISTOU candidate is Railway. Railway owns the current Web/API deployment evidence. Cloudflare is not current frontend hosting authority; it is reserved for later AI/edge capabilities when that phase is explicitly implemented.
+Current verified hosting for the KRISTOU candidate is Railway. Railway owns the current Web/API deployment evidence.
 
-Do not diagnose or rewrite the current Web build merely to satisfy an unrelated Cloudflare build/check. First trace the deployment that actually serves the user-visible application.
+Do not diagnose or rewrite the current Web build merely to satisfy a check from a non-authoritative hosting path. First trace the Railway deployment that actually serves the user-visible application.
 
 ---
 
