@@ -58,10 +58,7 @@ export type AuthErrorCode =
 export class AuthError extends Error {
   override name = "AuthError";
 
-  constructor(
-    public readonly code: AuthErrorCode,
-    message: string,
-  ) {
+  constructor(public readonly code: AuthErrorCode, message: string) {
     super(message);
   }
 }
