@@ -1,6 +1,9 @@
 name: R2 Prettier Artifact Recovery
 
 on:
+  push:
+    branches:
+      - foundation/r2-one-product-architecture-guard
   workflow_dispatch:
 
 permissions:
