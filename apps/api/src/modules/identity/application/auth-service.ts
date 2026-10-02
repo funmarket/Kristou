@@ -35,10 +35,7 @@ export interface IdentityRepository {
   }): Promise<void>;
   findWebSession(tokenHash: string): Promise<StoredWebSession | null>;
   revokeWebSession(tokenHash: string, revokedAt: Date): Promise<void>;
-  resolveTelegramUser(
-    profile: TelegramIdentityProfile,
-    authenticatedAt: Date,
-  ): Promise<string>;
+  resolveTelegramUser(profile: TelegramIdentityProfile, authenticatedAt: Date): Promise<string>;
 }
 
 export interface IdentityAuthServiceOptions {
@@ -95,13 +92,8 @@ export class IdentityAuthService {
     }
 
     const sessionToken = generateSessionToken();
-    const tokenHash = hashSessionToken(
-      sessionToken,
-      this.options.sessionTokenPepper,
-    );
-    const expiresAt = new Date(
-      now.getTime() + this.options.sessionTtlSeconds * 1000,
-    );
+    const tokenHash = hashSessionToken(sessionToken, this.options.sessionTokenPepper);
+    const expiresAt = new Date(now.getTime() + this.options.sessionTtlSeconds * 1000);
 
     await this.repository.createWebSession({
       userId: credential.userId,
@@ -115,9 +107,7 @@ export class IdentityAuthService {
     };
   }
 
-  async authenticateWebSession(
-    sessionToken: string,
-  ): Promise<AuthenticatedPrincipal> {
+  async authenticateWebSession(sessionToken: string): Promise<AuthenticatedPrincipal> {
     if (!sessionToken) {
       throw new AuthError("AUTH_REQUIRED", "Authentication is required");
     }
@@ -147,9 +137,7 @@ export class IdentityAuthService {
     await this.repository.revokeWebSession(tokenHash, this.now());
   }
 
-  async authenticateTelegram(
-    initData: string,
-  ): Promise<AuthenticatedPrincipal> {
+  async authenticateTelegram(initData: string): Promise<AuthenticatedPrincipal> {
     const validated = validateTelegramInitData(
       initData,
       this.options.telegramBotToken,
@@ -158,10 +146,7 @@ export class IdentityAuthService {
         maxAgeSeconds: this.options.telegramInitDataMaxAgeSeconds,
       },
     );
-    const userId = await this.repository.resolveTelegramUser(
-      validated.user,
-      validated.authDate,
-    );
+    const userId = await this.repository.resolveTelegramUser(validated.user, validated.authDate);
     return { userId };
   }
 
