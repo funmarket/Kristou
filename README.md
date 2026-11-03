@@ -6,7 +6,7 @@ This repository is intentionally clean. The HoomaUltimate repository is a read-o
 
 ## Current Phase 0 topology
 
-Verified deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`.
+Accepted integration source at the 2026-11-03 inspection: `phase-0-foundation@fb233decaa74463fa0f17e09f0bdcc986a15cf0c` (R6 / PR #15; exact-HEAD Foundation CI `37066810847` SUCCESS). The currently running Railway Web/API candidates still use the **older** `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`. Do not treat the accepted integration HEAD as deployed.
 
 ```text
 apps/
@@ -44,6 +44,15 @@ The currently verified public candidate runs on Railway:
 Cloudflare is not the current frontend hosting authority. It is reserved for later AI/edge capabilities when that phase is explicitly implemented.
 
 Deployment evidence belongs in `progress.md`; this README must not be used as a substitute for a fresh runtime check.
+
+### Verified limitations at the November 3 audit
+
+- `web-candidate`, `api-candidate`, PostgreSQL and Redis were reported online by Railway; other legacy/unverified-purpose services `web`, `Kristou`, and `discerning-energy` were offline. No service cleanup or deployment was performed.
+- The `discerning-energy` build on `phase-0-foundation` failed at database TypeScript compilation with Prisma `OutboxStatus` TS2305. That service runs `npm run build` without generation; Foundation CI and the successfully deployed API candidate run Prisma generation first. **F0-B1 remains unresolved**, not fixed by documentation.
+- Real disposable PostgreSQL integration-test proof remains outstanding; auth/identity implementation ownership is unresolved; R7-A has not started.
+- Current source is an early foundation shell and health-check API, not a complete school product. See `progress.md` and `docs/LIVING_BUILD_PLAN.md` for evidence and task readiness.
+
+No application code, Railway settings, or data was changed by this documentation audit.
 
 ## Mandatory reading before implementation
 
