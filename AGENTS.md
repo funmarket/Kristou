@@ -6,7 +6,32 @@ These rules apply to every AI agent, developer, automation, and coding session w
 
 KRISTOU SCHOOL is the product. Do not import HOOMA product names, routes, domains, business rules, schema, auth, runtime, or branding. HoomaUltimate is a read-only process/architecture reference only.
 
-Before changing anything, read this file and `docs/LIVING_BUILD_PLAN.md`. For product and architecture truth, read the relevant parts of `requirements.md`, `structure.md`, `docs/CANONICAL_MODEL.md`, and `docs/DECISIONS.md`.
+**FIRST RULE: Read the entire project documentation before doing any work.** The mandatory startup gate below applies to every new agent, chat, coding session, and delegated worker. Reading only the next task, a summary, or an old handoff is not enough.
+
+---
+
+## 0. FIRST RULE — mandatory complete project reading and understanding
+
+**STOP: No task selection, plan, source edit, command that mutates state, commit, PR, deployment, or delegation may begin until this gate is completed.** This includes seemingly small fixes and documentation-only tasks. Reading is allowed and required.
+
+1. **Read this entire `AGENTS.md` first**, including all existing rules below.
+2. **Inventory the current repository documentation from the actual branch tree.** Read **every Markdown/documentation file under `docs/`, recursively**, not only files linked from a task. Read the following root documents fully, in this order:
+   - `README.md` — project overview and operational entry points;
+   - `requirements.md` — the **complete school product**, roles, behavior, privacy, and acceptance, including future domains;
+   - `structure.md` — repository/runtime architecture, dependency direction, and every domain's owner;
+   - `docs/CANONICAL_MODEL.md` — canonical entities, write ownership, invariants, and explicit TBDs;
+   - `docs/DECISIONS.md` — all accepted and superseded architectural decisions;
+   - `docs/LIVING_BUILD_PLAN.md` — permanent Understand → Inspect → Own → Scope → Test → Document → Verify → Report discipline;
+   - `docs/superpowers/plans/2026-09-29-phase-0-foundation.md` — Phase 0 Tasks 1–10, prerequisites, interfaces, exact scope, and acceptance gates;
+   - `progress.md` — dated implementation, PR, test, CI, and deployment evidence.
+3. **Read any additional documents discovered under `docs/` or at the root.** The named list is a minimum, not an excuse to skip newly added plans, design decisions, handoffs, or instructions. Follow links to other governing project documents when they are part of the assigned scope.
+4. **Build a source-grounded project understanding before choosing work:** identify what Kristou School is, its roles and full accepted feature set; one canonical Web/Telegram frontend and User; backend and storage boundaries; domain owners; safety/privacy invariants; Phase 0 versus later school-feature scope; execution rules; and how progress is evidenced.
+5. **Distinguish four different things:** (a) accepted product requirements, (b) architecture/ownership contracts, (c) ordered implementation plans, and (d) currently implemented/tested/deployed facts. Conceptual entities in `CANONICAL_MODEL.md` are **not** automatically Prisma tables. Unchecked plan boxes, old SHAs and dated recovery notes are **not** current progress. ADR-013 supersedes ADR-003; never resurrect a second Telegram product owner.
+6. **Verify fresh live state after reading:** current `phase-0-foundation` HEAD, relevant PRs/parallel ownership, actual source, relevant tests/CI, and Railway only when deployment is part of the task. Do not treat historical snapshots, a green build, or a shell screenshot as proof of broader features or production behavior.
+7. **Before implementation, produce an internal document-coverage and understanding check:** record which documents and exact revision were read; summarize the product, architecture, current-vs-planned status, applicable task and dependencies; identify contradictions and unknowns. If any mandatory document is missing, inaccessible, unread, or materially contradictory, **STOP and report the blocker**. Do not fill missing context from memory or guess.
+8. **Only then execute the specifically authorized task** using the existing source-of-truth order, the Phase 0 plan where applicable, and the Living Build Plan's verification workflow. Do not start the next task or build later-phase features merely because they are documented.
+
+**Every new agent/session must independently perform this onboarding gate.** A predecessor's summary, tool result, or earlier assistant's confidence does not prove that the current agent read the documents. After onboarding, re-read the relevant sections and refresh live evidence at each task boundary. **Never skip the initial full reading because the task looks narrow.**
 
 ---
 
