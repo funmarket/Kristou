@@ -48,7 +48,7 @@ Deployment evidence belongs in `progress.md`; this README must not be used as a 
 ### Verified limitations at the November 3 audit
 
 - `web-candidate`, `api-candidate`, PostgreSQL and Redis were reported online by Railway; other legacy/unverified-purpose services `web`, `Kristou`, and `discerning-energy` were offline. No service cleanup or deployment was performed.
-- The `discerning-energy` build on `phase-0-foundation` failed at database TypeScript compilation with Prisma `OutboxStatus` TS2305. That service runs `npm run build` without generation; Foundation CI and the successfully deployed API candidate run Prisma generation first. **F0-B1 remains unresolved**, not fixed by documentation.
+- The `discerning-energy` build on `phase-0-foundation` failed at database TypeScript compilation with Prisma `OutboxStatus` TS2305. PR #19 now adds `npm run db:generate` to the canonical root build; exact-head Foundation CI run `41674314024` passed generation, validation, typecheck, tests, Web build, repository build, and deployment preflight. **F0-B1 is fixed in PR #19 and awaits merge; this documentation branch does not change `phase-0-foundation`.**
 - Real disposable PostgreSQL integration-test proof remains outstanding; auth/identity implementation ownership is unresolved; R7-A has not started.
 - Current source is an early foundation shell and health-check API, not a complete school product. See `progress.md` and `docs/LIVING_BUILD_PLAN.md` for evidence and task readiness.
 
