@@ -50,7 +50,7 @@ Documentation is part of implementation. If architecture or ownership changes, t
 
 ## 2. Repository topology
 
-Current implemented Phase 0 foundation:
+Implemented Phase 0 workspaces, verified against `phase-0-foundation@fb233decaa74463fa0f17e09f0bdcc986a15cf0c` on 2026-11-03:
 
 ```text
 Kristou/
@@ -60,19 +60,15 @@ Kristou/
     worker/
 
   packages/
-    auth/
     config/
     contracts/
     database/
     domain/
     frontend/
-    media-processing/
-    storage/
     testing/
     ui/
 
   docs/
-    adr/
     CANONICAL_MODEL.md
     DECISIONS.md
     LIVING_BUILD_PLAN.md
@@ -89,9 +85,9 @@ Kristou/
   README.md
 ```
 
-The listed apps/packages exist in the verified deployed source lineage. Their presence is current-state evidence, not permission to preserve accidental ownership indefinitely.
+The current GitHub tree **does not** contain `packages/auth`, `packages/media-processing`, `packages/storage`, or an independent `apps/telegram` product workspace. The package sections below describe bounded architectural responsibilities **if and when their implementation is separately authorized**; they do not establish that those packages exist. In particular, the concrete Identity/Auth implementation boundary remains unresolved, and naming `packages/auth` below does not authorize creating it.
 
-Current verified deployed/source lineage: `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc`, source-identical to `foundation/build-graph-closure@2e38c4f2b736fbdd04095f4cfa8577f99657eb2b`.
+Accepted integration source: `phase-0-foundation@fb233decaa74463fa0f17e09f0bdcc986a15cf0c` (R6). The running Railway Web/API candidates were still based on older `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc` at the 2026-11-03 inspection. These are **not the same current deployed revision**. See `progress.md` for current-state evidence and the unresolved build/deployment gap.
 
 Do not add a top-level app/package merely to avoid an existing ownership boundary.
 
