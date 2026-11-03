@@ -514,7 +514,7 @@ Railway's running `web-candidate` and `api-candidate` still used the earlier `de
 
 **Unresolved readiness ledger (not permission to implement):**
 
-- **F0-B1 — Prisma generation/build graph:** source discrepancy and failed deployment evidenced; correction **not implemented**.
+- **F0-B1 — Prisma generation/build graph:** correction implemented in PR #19 (package.json adds db:generate before package compilation); exact-head Foundation CI 41674314024 passed. **Awaiting PR #19 merge; phase-0-foundation remains unchanged until then.**
 - **F0-B2 — disposable PostgreSQL integration:** real `test:integration` execution **not verified**.
 - **F0-B3 — Identity/Auth concrete ownership:** documented `packages/auth` is absent; implementation owner **not yet resolved**.
 - **R7-A — explicit account-link contract RED:** future proposed slice; **not started or authorized**.
