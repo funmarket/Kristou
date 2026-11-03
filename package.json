@@ -16,7 +16,7 @@
     "build:web": "npm -w @kristou/config run build && npm -w @kristou/ui run build && npm -w @kristou/frontend run build && npm -w @kristou/web run build",
     "build:packages": "node scripts/run-workspace-script.mjs build packages",
     "build:apps": "node scripts/run-workspace-script.mjs build apps",
-    "build": "npm run build:packages && npm run build:apps",
+    "build": "npm run db:generate && npm run build:packages && npm run build:apps",
     "typecheck": "node scripts/run-workspace-script.mjs typecheck all",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write . --ignore-unknown",
@@ -45,3 +45,4 @@
     "typescript-eslint": "8.65.0"
   }
 }
+
