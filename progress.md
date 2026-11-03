@@ -317,3 +317,15 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 5. **Railway candidate promotion or service cleanup:** **NOT AUTHORIZED**. Do not assume an offline service is safe to remove or that the integration HEAD should be deployed automatically.
 
 **Evidence classes:** GitHub source/CI and Railway API/deployment/build/HTTP logs were inspected. No new clean-install build, local RED/GREEN run, live PostgreSQL test, Telegram WebView test, full browser interaction QA, production migration, or candidate promotion was performed. The documentation audit must not be scored as a successful F0-B1 implementation.
+
+
+---
+
+## F0-B1 source-fix update — 2026-11-03
+
+- **Status:** FIXED IN PR / AWAITING MERGE.
+- Root source correction: package.json now runs npm run db:generate before build:packages and build:apps.
+- RED evidence: clean dependency installation followed by direct database compilation reproduced TS2305 for the missing OutboxStatus export before Prisma generation.
+- GREEN evidence: Prisma generation and dependency-ordered package/application builds passed locally; exact-head Foundation CI run 41674314024 passed generation, validation, architecture, format, lint, typecheck, unit tests, Web build, repository build, and deployment preflight.
+- GitHub: PR #19, head 05532f903ce14b0ab343f1141244e2645d431b89, changes only the root build script. No Railway deployment or infrastructure mutation was performed.
+- PR #18 remains a documentation audit and does not modify phase-0-foundation; merge PR #19 before treating F0-B1 as present on the integration branch.
