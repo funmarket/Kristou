@@ -506,10 +506,18 @@ Before consequential work:
 - use Railway as the current Web/API deployment authority unless the owner explicitly changes the hosting decision;
 - treat deployment branches as deployment evidence, not as a substitute for integration-branch authority.
 
-Known frontend recovery debt remains:
+### Last verified source and deployment snapshot — 2026-11-03
 
-- R5 must close the explicit canonical build-graph packet without reintroducing a Telegram product workspace;
-- R6-R8 must still wire and prove Browser/Telegram runtime-context and authentication parity;
-- architecture checks now reject any reintroduced `apps/telegram/src` product source owner.
+The accepted `phase-0-foundation` HEAD was `fb233decaa74463fa0f17e09f0bdcc986a15cf0c` (R6 / PR #15); exact-HEAD Foundation CI `37066810847` passed and no pull requests were open at inspection. **R6 source/runtime-context integration is merged**, superseding the historical note that R6 still needed implementation. End-to-end authenticated Browser/Telegram product parity remains unproven and should not be claimed from the R6 merge.
 
-Use `progress.md` for exact implementation/deployment evidence and re-verify mutable branch/runtime facts before each consequential task.
+Railway's running `web-candidate` and `api-candidate` still used the earlier `deploy-candidate@76ab188b...` lineage. The `phase-0-foundation`-tracking `discerning-energy` service remained offline after a build failure. Its build ran `npm run build` without first generating Prisma and failed with TS2305 on `OutboxStatus`; the successful API candidate explicitly ran `npm run db:generate && npm run build`. See `progress.md` for exact Railway deployment IDs, limitations, and evidence classes.
+
+**Unresolved readiness ledger (not permission to implement):**
+
+- **F0-B1 — Prisma generation/build graph:** source discrepancy and failed deployment evidenced; correction **not implemented**.
+- **F0-B2 — disposable PostgreSQL integration:** real `test:integration` execution **not verified**.
+- **F0-B3 — Identity/Auth concrete ownership:** documented `packages/auth` is absent; implementation owner **not yet resolved**.
+- **R7-A — explicit account-link contract RED:** future proposed slice; **not started or authorized**.
+- **Railway promotion/cleanup:** no automatic action; separate owner-approved infrastructure task required.
+
+The architecture guard rejects reintroduced `apps/telegram/src` product ownership. This file remains the **execution discipline**, not an independent task backlog: maintain dated implementation and deployment proof in `progress.md`. Re-read live source and Railway before any consequential action.
