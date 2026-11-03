@@ -276,3 +276,44 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 - R4 decision: **WORKSPACE REMOVED**. The obsolete `apps/telegram` workspace/source/build ownership is removed; canonical Telegram host runtime remains at `apps/web/src/telegram/runtime.ts`.
 - Architecture regression coverage now requires every `apps/telegram/src/**` product source owner to fail; the temporary R2/R3 `src/index.ts` exception is removed.
 - Repository-wide build-graph redesign remains a separate R5 packet; Browser/Telegram runtime-context integration remains R6.
+
+---
+
+## Live source and Railway audit — 2026-11-03 (documentation-only inspection)
+
+**Inspection scope:** GitHub `funmarket/Kristou`, `phase-0-foundation`; Railway project `KRISTOU`, production environment. The findings below were collected directly from GitHub source/CI and Railway service/deployment/configuration/log APIs on 2026-11-03. No application, deployment, database, or Railway configuration change was authorized or performed by this audit. This entry is a snapshot; re-verify mutable state before future tasks.
+
+### Accepted GitHub source and CI
+
+- Integration HEAD: `phase-0-foundation@fb233decaa74463fa0f17e09f0bdcc986a15cf0c`, merge of R6 / PR #15 on 2026-10-02; no open PRs at inspection.
+- Exact-HEAD Foundation CI run `37066810847`: **SUCCESS**. Verified steps include `npm ci`, `npm run db:generate`, Prisma validation, architecture/format/lint/typecheck, unit tests, Web build, repository build, and deploy preflight. This does **not** prove a clean `npm run build` without prior Prisma generation, a real PostgreSQL integration run, or a successful Railway deployment of this HEAD.
+- R1 / PR #11, R2 / PR #12, R3 / PR #13, R4 / PR #14, and R6 / PR #15 are merged into this integration lineage. R6 mounts Telegram host context through `apps/web/src/runtime-context.ts` and `apps/web/src/main.tsx` into the same React entry point. Browser/Telegram authenticated product parity is **not** implemented/proven.
+- R7 auth candidate PRs #16 and #17 were closed **unmerged** (2026-10-02 and 2026-10-03 respectively). Do not treat their authentication code as accepted source or resume it without a separately verified task.
+
+### Current implementation boundary (not future product target)
+
+- Actual application workspaces: `apps/api`, `apps/web`, `apps/worker`. Actual packages: `config`, `contracts`, `database`, `domain`, `frontend`, `testing`, `ui`.
+- **Absent** from current source: `packages/auth`, `packages/media-processing`, `packages/storage`, and independent `apps/telegram`. These names in `structure.md` previously mixed architectural target descriptions with implemented-package claims.
+- `apps/web/src/App.tsx` currently renders `KristouShell` only. The shell supports EN/FR/AR (Arabic RTL) and light/dark controls, but registration, authenticated parent/teacher/admin flows, classes, messaging, pickup, and other planned product features are not proven implemented.
+- `apps/api/src/bootstrap/app.ts` registers the `/health` router with basic Express/CORS/Helmet setup; no accepted account login, account-link, or Telegram `initData` verification routes are wired.
+- The Prisma schema contains `User`, `WebCredential`, `WebSession`, `TelegramIdentity`, `AccountLinkChallenge`, `AuditLog`, `OutboxEvent`, and the `OutboxStatus` enum. Presence of schema and integration-test source is not proof of applying migrations or exercising a real database. `npm run test:integration` was **not** executed by the inspected exact-HEAD CI workflow.
+
+### Railway production environment (provider report)
+
+- Project ID `215db220-7a64-49a3-99ae-fd7bef9d0ff0`; environment ID `ddf10fb6-3428-4720-bdd2-c153e7ab299f`. No staged/pending changes were reported during inspection.
+- `web-candidate`: **ONLINE**, latest successful deployment `c20235a8-a4b6-42f5-94f9-639576f3b318` from `deploy-candidate@76ab188b39327955d4b23a823ff1d5b5ddaf47dc` (2026-10-01), with `npm run build:web`. Domain: `web-candidate-production-f61b.up.railway.app`. Railway HTTP logs include successful requests on 2026-11-03 for `/` (200), and earlier successful JS/CSS/logo requests (200). No complete interactive-browser acceptance test was performed in this audit.
+- `api-candidate`: **ONLINE**, latest successful deployment `03067730-69a4-47bf-8a22-5726e7331a57` from the same older deployment lineage, with `npm run db:generate && npm run build`; start command `npm -w @kristou/api run start`; healthcheck path `/health/live`. Current direct HTTP health probe was not obtained; Railway reported it online.
+- Railway PostgreSQL and Redis services: **ONLINE** by service/replica status; PostgreSQL has the existing `postgres-volume` mounted at `/var/lib/postgresql/data`. Neither database contents nor real application database integration were inspected.
+- Other services `web`, `Kristou`, and `discerning-energy`: **OFFLINE** with previous failed deployments. Their purpose should not be inferred from names; the successful candidate services are the only currently running app deployments observed. Do not change/delete any service as a consequence of this audit.
+- `discerning-energy` tracks `phase-0-foundation`; deployment `1c2ab817-89c0-4b8d-9ccb-e57aa46f589e` failed at `fb233dec...`. Build logs show `npm run build` -> `build:packages` -> database `tsc` -> `TS2305: Module '"@prisma/client"' has no exported member 'OutboxStatus'`. Railway config for this service uses plain `npm run build`; the successful `api-candidate` config explicitly generates Prisma first.
+- **Deployment parity is NOT verified:** the live successful candidates are on the older `deploy-candidate` revision, not the accepted R6 integration HEAD. Online/service SUCCESS is not proof of full functional parity or database feature behavior.
+
+### Readiness ledger and next bounded tasks
+
+1. **F0-B1 — Canonical Prisma generation/build dependency:** **BLOCKED / NOT FIXED**. Root `package.json` uses `build = build:packages && build:apps` without `db:generate`; CI and the successful API candidate generate first. A focused source change requires a separate approved packet with RED/GREEN proof and exact-head validation. Do not alter Railway merely to conceal the underlying build-path discrepancy.
+2. **F0-B2 — Real disposable PostgreSQL verification:** **NOT VERIFIED**. Run migrations and `test:integration` on disposable PostgreSQL only when separately authorized. Production database operations are outside this audit.
+3. **F0-B3 — Identity/Auth ownership reconciliation:** **UNRESOLVED**. The architecture names Identity & Authentication while `packages/auth` is absent. Prove one concrete source boundary before introducing auth contracts or services.
+4. **R7-A — Identity / Account-Link Contract RED:** **NOT STARTED / NOT AUTHORIZED**. Review the supplied R7-A packet only after fresh readiness evidence. The packet itself was not executed.
+5. **Railway candidate promotion or service cleanup:** **NOT AUTHORIZED**. Do not assume an offline service is safe to remove or that the integration HEAD should be deployed automatically.
+
+**Evidence classes:** GitHub source/CI and Railway API/deployment/build/HTTP logs were inspected. No new clean-install build, local RED/GREEN run, live PostgreSQL test, Telegram WebView test, full browser interaction QA, production migration, or candidate promotion was performed. The documentation audit must not be scored as a successful F0-B1 implementation.
