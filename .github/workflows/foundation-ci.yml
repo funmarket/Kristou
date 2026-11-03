@@ -17,6 +17,20 @@ jobs:
   foundation:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: kristou_ci
+          POSTGRES_PASSWORD: kristou_ci
+          POSTGRES_DB: kristou_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@v4
@@ -37,6 +51,16 @@ jobs:
         env:
           DATABASE_URL: postgresql://kristou_ci:kristou_ci@127.0.0.1:5432/kristou_ci
         run: npm run db:validate
+
+      - name: Apply database migrations
+        env:
+          DATABASE_URL: postgresql://kristou_ci:kristou_ci@127.0.0.1:5432/kristou_ci
+        run: npm run db:migrate:deploy
+
+      - name: Foundation integration tests
+        env:
+          DATABASE_URL: postgresql://kristou_ci:kristou_ci@127.0.0.1:5432/kristou_ci
+        run: npm run test:integration -- tests/database/foundation.integration.test.ts
 
       - name: Architecture check
         run: npm run architecture:check
