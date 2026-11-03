@@ -310,7 +310,7 @@ Architectural decisions belong in `docs/DECISIONS.md`.
 
 ### Readiness ledger and next bounded tasks
 
-1. **F0-B1 — Canonical Prisma generation/build dependency:** **BLOCKED / NOT FIXED**. Root `package.json` uses `build = build:packages && build:apps` without `db:generate`; CI and the successful API candidate generate first. A focused source change requires a separate approved packet with RED/GREEN proof and exact-head validation. Do not alter Railway merely to conceal the underlying build-path discrepancy.
+1. **F0-B1 — Canonical Prisma generation/build dependency (audit snapshot):** **BLOCKED / NOT FIXED at the time of the documentation audit.** The then-current root `package.json` used `build = build:packages && build:apps` without `db:generate`; CI and the successful API candidate generated first. This historical finding was subsequently corrected in PR #19; see the current F0-B1 source-fix update below. Do not alter Railway merely to conceal the underlying build-path discrepancy.
 2. **F0-B2 — Real disposable PostgreSQL verification:** **NOT VERIFIED**. Run migrations and `test:integration` on disposable PostgreSQL only when separately authorized. Production database operations are outside this audit.
 3. **F0-B3 — Identity/Auth ownership reconciliation:** **UNRESOLVED**. The architecture names Identity & Authentication while `packages/auth` is absent. Prove one concrete source boundary before introducing auth contracts or services.
 4. **R7-A — Identity / Account-Link Contract RED:** **NOT STARTED / NOT AUTHORIZED**. Review the supplied R7-A packet only after fresh readiness evidence. The packet itself was not executed.
