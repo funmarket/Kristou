@@ -6,7 +6,32 @@ These rules apply to every AI agent, developer, automation, and coding session w
 
 KRISTOU SCHOOL is the product. Do not import HOOMA product names, routes, domains, business rules, schema, auth, runtime, or branding. HoomaUltimate is a read-only process/architecture reference only.
 
-Before changing anything, read this file and `docs/LIVING_BUILD_PLAN.md`. For product and architecture truth, read the relevant parts of `requirements.md`, `structure.md`, `docs/CANONICAL_MODEL.md`, and `docs/DECISIONS.md`.
+**FIRST RULE: Read the entire project documentation before doing any work.** The mandatory startup gate below applies to every new agent, chat, coding session, and delegated worker. Reading only the next task, a summary, or an old handoff is not enough.
+
+---
+
+## 0. FIRST RULE — mandatory complete project reading and understanding
+
+**STOP: No task selection, plan, source edit, command that mutates state, commit, PR, deployment, or delegation may begin until this gate is completed.** This includes seemingly small fixes and documentation-only tasks. Reading is allowed and required.
+
+1. **Read this entire `AGENTS.md` first**, including all existing rules below.
+2. **Inventory the current repository documentation from the actual branch tree.** Read **every Markdown/documentation file under `docs/`, recursively**, not only files linked from a task. Read the following root documents fully, in this order:
+   - `README.md` — project overview and operational entry points;
+   - `requirements.md` — the **complete school product**, roles, behavior, privacy, and acceptance, including future domains;
+   - `structure.md` — repository/runtime architecture, dependency direction, and every domain's owner;
+   - `docs/CANONICAL_MODEL.md` — canonical entities, write ownership, invariants, and explicit TBDs;
+   - `docs/DECISIONS.md` — all accepted and superseded architectural decisions;
+   - `docs/LIVING_BUILD_PLAN.md` — permanent Understand → Inspect → Own → Scope → Test → Document → Verify → Report discipline;
+   - `docs/superpowers/plans/2026-09-29-phase-0-foundation.md` — Phase 0 Tasks 1–10, prerequisites, interfaces, exact scope, and acceptance gates;
+   - `progress.md` — dated implementation, PR, test, CI, and deployment evidence.
+3. **Read any additional documents discovered under `docs/` or at the root.** The named list is a minimum, not an excuse to skip newly added plans, design decisions, handoffs, or instructions. Follow links to other governing project documents when they are part of the assigned scope.
+4. **Build a source-grounded project understanding before choosing work:** identify what Kristou School is, its roles and full accepted feature set; one canonical Web/Telegram frontend and User; backend and storage boundaries; domain owners; safety/privacy invariants; Phase 0 versus later school-feature scope; execution rules; and how progress is evidenced.
+5. **Distinguish four different things:** (a) accepted product requirements, (b) architecture/ownership contracts, (c) ordered implementation plans, and (d) currently implemented/tested/deployed facts. Conceptual entities in `CANONICAL_MODEL.md` are **not** automatically Prisma tables. Unchecked plan boxes, old SHAs and dated recovery notes are **not** current progress. ADR-013 supersedes ADR-003; never resurrect a second Telegram product owner.
+6. **Verify fresh live state after reading:** current `phase-0-foundation` HEAD, relevant PRs/parallel ownership, actual source, relevant tests/CI, and Railway only when deployment is part of the task. Do not treat historical snapshots, a green build, or a shell screenshot as proof of broader features or production behavior.
+7. **Before implementation, produce an internal document-coverage and understanding check:** record which documents and exact revision were read; summarize the product, architecture, current-vs-planned status, applicable task and dependencies; identify contradictions and unknowns. If any mandatory document is missing, inaccessible, unread, or materially contradictory, **STOP and report the blocker**. Do not fill missing context from memory or guess.
+8. **Only then execute the specifically authorized task** using the existing source-of-truth order, the Phase 0 plan where applicable, and the Living Build Plan's verification workflow. Do not start the next task or build later-phase features merely because they are documented.
+
+**Every new agent/session must independently perform this onboarding gate.** A predecessor's summary, tool result, or earlier assistant's confidence does not prove that the current agent read the documents. After onboarding, re-read the relevant sections and refresh live evidence at each task boundary. **Never skip the initial full reading because the task looks narrow.**
 
 ---
 
@@ -116,7 +141,21 @@ Mandatory:
 - PostgreSQL is durable business truth;
 - Redis is transient infrastructure only where explicitly designed;
 - object storage owns media bytes;
-- Web and Telegram are delivery/authentication surfaces over the same canonical product state.
+- Browser and Telegram WebView are delivery/authentication contexts of the same canonical product state.
+
+### One product frontend — hard lock
+
+KRISTOU has one canonical React/TypeScript product frontend.
+
+Target ownership:
+
+- `apps/web` owns the canonical React application entry, route authority, product shell, and runtime composition for normal Browser + Telegram WebView;
+- product feature UI/state/API integration belongs in `packages/frontend` under the owning feature/domain boundary;
+- `packages/ui` remains domain-neutral presentation/tokens/assets;
+- Telegram-specific code is limited to host/runtime mechanics such as validated `initData` transport, lifecycle, viewport/safe-area, BackButton, haptics/native host integration, and compatible entry/deep-link behavior;
+- no second Telegram router, provider, shell, feature tree, product state store, domain API client, asset authority, or business behavior is allowed.
+
+Current state after R4: Telegram host/runtime mechanics are owned under `apps/web/src/telegram/runtime.ts`, and no independent `apps/telegram` product workspace/source owner remains. If a future compatibility package is explicitly required, it must be facade-only and must not regain router, shell, feature, state, API, asset, runtime, or business ownership.
 
 ### No monolithic authorities
 
@@ -134,7 +173,20 @@ Genuinely generic primitives may be shared, but shared code must never become a 
 
 ---
 
-## 6. Parallel-agent / concurrency boundary
+## 6. Branching, parallel-agent, and concurrency boundary
+
+KRISTOU uses an integration-branch workflow, but branch names are not authority by themselves. Fresh source/runtime inspection decides which commit is the valid starting state.
+
+Integration branch discipline:
+
+- `main` is not the day-to-day implementation branch.
+- `phase-0-foundation` is the long-lived Phase 0 integration branch after accepted recovery/reconciliation work lands.
+- Before branching a new implementation slice, verify the exact current `phase-0-foundation` HEAD and confirm it contains the most recently accepted foundation/build/runtime work.
+- Railway deployment branches/services are deployment evidence, not a substitute for integration-branch authority.
+- If a verified deployed/source lineage is ahead of `phase-0-foundation`, reconcile it through a reviewed PR before new feature work branches from the integration line.
+- After reconciliation, branch new work only from the newly verified integration HEAD.
+- Slice branches use focused names such as `foundation/<task>`, `feat/<domain-slice>`, or `fix/<issue>`.
+- `main` moves only through an explicit owner-approved release/foundation promotion.
 
 Unless the product owner explicitly instructs otherwise, never interfere with another agent's active work.
 
@@ -145,7 +197,8 @@ Do not:
 - force-push;
 - overwrite a non-fast-forward update;
 - modify unrelated files while "already in the area";
-- adopt another agent's task without authorization.
+- adopt another agent's task without authorization;
+- branch a new implementation slice from stale `main` or from an integration head known to be stale relative to accepted/deployed source lineage awaiting reconciliation.
 
 If HEAD changes after the initial snapshot:
 
@@ -153,7 +206,7 @@ If HEAD changes after the initial snapshot:
 2. inspect the new HEAD and incoming diff;
 3. determine whether it overlaps the current task;
 4. stop and report if ownership overlaps or is unclear;
-5. if clearly unrelated, rebuild on the new HEAD without altering incoming work.
+5. if clearly unrelated, rebuild on the freshly verified authoritative integration/source HEAD without altering incoming work.
 
 ---
 
@@ -175,6 +228,12 @@ Documentation is part of implementation. Every completed task must audit and upd
 Do not create overlapping architecture or status documents.
 
 Open PR work is in-flight, not current foundation truth.
+
+### Deployment authority
+
+Current verified hosting for the KRISTOU candidate is Railway. Railway owns the current Web/API deployment evidence.
+
+Do not diagnose or rewrite the current Web build merely to satisfy a check from a non-authoritative hosting path. First trace the Railway deployment that actually serves the user-visible application.
 
 ---
 

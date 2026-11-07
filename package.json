@@ -1,0 +1,47 @@
+{
+  "name": "kristou-school",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "node scripts/run-workspace-script.mjs dev all",
+    "build:web": "npm -w @kristou/config run build && npm -w @kristou/ui run build && npm -w @kristou/frontend run build && npm -w @kristou/web run build",
+    "build:packages": "node scripts/run-workspace-script.mjs build packages",
+    "build:apps": "node scripts/run-workspace-script.mjs build apps",
+    "build": "npm run db:generate && npm run build:packages && npm run build:apps",
+    "typecheck": "node scripts/run-workspace-script.mjs typecheck all",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write . --ignore-unknown",
+    "format:check": "prettier --check . --ignore-unknown",
+    "test": "npm run prepare:runtime && npm run test:unit:prepared",
+    "test:integration": "node scripts/run-tests.mjs integration",
+    "architecture:check": "node scripts/architecture-check.mjs",
+    "deploy:preflight": "node scripts/deploy-preflight.mjs",
+    "security:check": "npm audit --omit=dev --omit=optional --audit-level=high",
+    "check": "npm run architecture:check && npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm run deploy:preflight",
+    "db:generate": "npm -w @kristou/database run generate",
+    "db:validate": "npm -w @kristou/database run validate",
+    "db:migrate:deploy": "npm -w @kristou/database run migrate:deploy",
+    "db:migrate:status": "npm -w @kristou/database run migrate:status",
+    "prepare:runtime": "npm run db:generate && npm run build:packages",
+    "test:unit:prepared": "node scripts/run-tests.mjs unit"
+  },
+  "devDependencies": {
+    "@testing-library/react": "16.3.0",
+    "concurrently": "10.0.5",
+    "eslint": "10.7.0",
+    "jsdom": "26.1.0",
+    "prettier": "3.9.6",
+    "tsx": "4.20.5",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.65.0"
+  }
+}
