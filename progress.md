@@ -1,5 +1,14 @@
 # KRISTOU SCHOOL — PROGRESS
 
+## Task 7 — GitHub authentication-primitives candidate (2026-11-08; pending CI)
+
+- Source baseline: `main@d02280352013bd607d5429c2a15d5713acba11e3`; Task 7 is being prepared on the focused branch `feat/task-7-auth-primitives-main-20261108`.
+- Scope: `packages/auth/`, `tests/auth/`, npm lockfile workspace metadata, and this progress record; no API readiness refactor, HTTP authentication flow, database migration, UI, or Railway change.
+- Implemented primitives: Argon2id password hashing/verification using the existing locked `argon2@0.45.1`; opaque 256-bit session tokens with SHA-256 hashed-token verification; Telegram Mini App `initData` HMAC and timestamp validation.
+- Local evidence before publication: focused session and Telegram tests 8/8 PASS under Node 22; password tests and complete repository checks were BLOCKED by unavailable registry dependencies/checkout. Those prior results do **not** establish exact-commit CI or Argon2id behavior.
+- Status: candidate only. Do not call Task 7 accepted, merged, deployed, or production-ready until exact-commit CI and all mandatory checks are verified.
+
+
 Status: **CURRENT IMPLEMENTATION EVIDENCE ONLY**
 
 This file records verified implementation state. It must not become a second requirements, architecture, or decision document.
