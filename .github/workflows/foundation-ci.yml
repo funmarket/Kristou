@@ -3,11 +3,10 @@ name: Foundation CI
 on:
   push:
     branches:
-      - foundation/build-graph-closure
-      - phase-0-foundation
+      - main
   pull_request:
     branches:
-      - phase-0-foundation
+      - main
   workflow_dispatch:
 
 permissions:
